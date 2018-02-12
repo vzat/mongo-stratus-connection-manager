@@ -6,7 +6,7 @@ const morgan = require('morgan');
 let app = express();
 
 const logger = require('../lib/logger');
-const routes = require('./api/v1/routes');
+const routes = require('../api/v1/routes');
 
 module.exports = new Promise((resolve, reject) => {
     app.set('port', process.env.PORT || 4000);
