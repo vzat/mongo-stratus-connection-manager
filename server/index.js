@@ -41,7 +41,6 @@ module.exports = new Promise((resolve, reject) => {
         mongoVersion: 'latest'
     };
 
-    // googleCloudPlatform.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
-    googleCloudPlatform.getProject();
+    googleCloudPlatform.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
     resolve(app);
 });
