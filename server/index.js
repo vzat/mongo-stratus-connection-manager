@@ -30,5 +30,18 @@ module.exports = new Promise((resolve, reject) => {
         reject(err);
     });
 
+    // Temp Create Single Node DB on Google Cloud Platform
+    const googleCloudPlatform = require('../lib/cloud-platforms/google-cloud-platform');
+
+    const serverData = {
+        serverName: 'google-test',
+        serverPort: '27017',
+        rootUser: 'admin',
+        rootPass: 'pass',
+        mongoVersion: 'latest'
+    };
+
+    // googleCloudPlatform.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
+    googleCloudPlatform.getProject();
     resolve(app);
 });
