@@ -31,7 +31,8 @@ module.exports = new Promise((resolve, reject) => {
     });
 
     // Temp Create Single Node DB on Google Cloud Platform
-    const googleCloudPlatform = require('../lib/cloud-platforms/google-cloud-platform');
+    const gcp = require('../lib/cloud-platforms/gcp');
+    const ssh = require('../lib/ssh');
 
     const serverData = {
         serverName: 'google-test',
@@ -41,6 +42,8 @@ module.exports = new Promise((resolve, reject) => {
         mongoVersion: 'latest'
     };
 
-    googleCloudPlatform.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
+    // gcp.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
+    ssh.createSingleNodeDB('35.231.10.214', 'vlad_mihail_zat', 'gcp/gcp-private.ppk', serverData);
+
     resolve(app);
 });
