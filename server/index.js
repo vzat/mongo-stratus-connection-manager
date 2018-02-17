@@ -35,14 +35,14 @@ module.exports = new Promise((resolve, reject) => {
     const ssh = require('../lib/ssh');
 
     const serverData = {
-        serverName: 'google-test',
+        serverName: 'google-test-19',
         serverPort: '27017',
         rootUser: 'admin',
         rootPass: 'pass',
         mongoVersion: 'latest'
     };
 
-    // gcp.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
+    gcp.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
 
     resolve(app);
 });
