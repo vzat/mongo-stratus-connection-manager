@@ -44,6 +44,22 @@ module.exports = new Promise((resolve, reject) => {
     //
     // gcp.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
 
+    // const db = require('../lib/db');
+    //
+    // // Save Server to DB
+    // const database = {
+    //     serverName: 'serverName2',
+    //     name: 'local',
+    //     ip: 'ip',
+    //     port: 27017,
+    //     users: {
+    //         username: 'admin',
+    //         password: 'pass'
+    //     },
+    //     type: 'single-node'
+    // };
+    // db.addDBToUser('jsmith', database);
+
 
     resolve(app);
 });

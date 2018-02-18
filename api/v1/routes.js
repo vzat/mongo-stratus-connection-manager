@@ -5,13 +5,13 @@ const gcp = require('../../lib/cloud-platforms/gcp');
 
 const routes = express.Router();
 
-routes.port('/create/database', async (req, res) => {
+routes.post('/create/database', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     try {
         const username = req.body.username;
 
-        if (!username) throw new Error('Invalid username')
+        if (!username) throw new Error('Invalid username');
 
         // ServerInfo
         // ---> cloudPlatform
@@ -45,6 +45,7 @@ routes.port('/create/database', async (req, res) => {
 
         if (serverInfo.cloudPlatform === 'gcp') {
             gcp.createSingleNodeDB(username, serverInfo.region, serverInfo.machineType, Number(serverInfo.diskSize), serverData);
+            res.end(JSON.stringify({'ok': 1}));
         }
         else {
             throw new Error('Invalid Cloud Platform');
@@ -52,7 +53,7 @@ routes.port('/create/database', async (req, res) => {
     }
     catch (err) {
         logger.log('error', err);
-        res.end(JSON.stringify({'error': err}));
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
     }
 });
 
