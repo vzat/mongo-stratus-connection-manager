@@ -31,18 +31,19 @@ module.exports = new Promise((resolve, reject) => {
     });
 
     // Temp Create Single Node DB on Google Cloud Platform
-    const gcp = require('../lib/cloud-platforms/gcp');
-    const ssh = require('../lib/ssh');
+    // const gcp = require('../lib/cloud-platforms/gcp');
+    // const ssh = require('../lib/ssh');
+    //
+    // const serverData = {
+    //     serverName: 'google-test-2',
+    //     serverPort: '27017',
+    //     rootUser: 'admin',
+    //     rootPass: 'pass',
+    //     mongoVersion: 'latest'
+    // };
+    //
+    // gcp.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
 
-    const serverData = {
-        serverName: 'google-test-19',
-        serverPort: '27017',
-        rootUser: 'admin',
-        rootPass: 'pass',
-        mongoVersion: 'latest'
-    };
-
-    gcp.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
 
     resolve(app);
 });
