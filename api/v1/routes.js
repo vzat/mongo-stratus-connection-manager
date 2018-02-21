@@ -68,14 +68,14 @@ routes.post('/create/replicaset/db', async (req, res) => {
         // ServerInfo
         // ---> cloudPlatform
         // ---> regions[]
-        // ---> machineType
+        // ---> machineTypes[]
         // ---> diskSize
         const serverInfo = req.body.serverInfo;
 
         if (!serverInfo ||
             !serverInfo.cloudPlatform ||
-            !serverInfo.region ||
-            !serverInfo.machineType ||
+            !serverInfo.regions ||
+            !serverInfo.machineTypes ||
             !serverInfo.diskSize)
             throw new Error('Invalid Server Info');
 
@@ -90,20 +90,21 @@ routes.post('/create/replicaset/db', async (req, res) => {
 
         if (!serverData ||
             !serverData.serverName ||
-            !serverData.serverPort ||
+            !serverData.serverPorts ||
             !serverData.rootUser ||
             !serverData.rootPass ||
             !serverData.mongoVersion)
             throw new Error('Invalid Server Data');
 
         // Check correct no of replicas
-        if (serverInfo.regions.length === 0 ||
-            serverData.serverPorts.length === 0 ||
-            serverInfo.regions.length !== serverData.serverPorts.length)
-            throw new Error('Invalid Server Data');
+        if (!serverInfo.regions.length ||
+            serverInfo.regions.length === 0 ||
+            serverInfo.regions.length !== serverData.serverPorts.length ||
+            serverInfo.regions.length !== serverInfo.machineTypes.length)
+            throw new Error('Invalid Replica Set Data');
 
         if (serverInfo.cloudPlatform === 'gcp') {
-            gcp.createReplicaSetDB(username, serverInfo.region, serverInfo.machineType, Number(serverInfo.diskSize), serverData);
+            gcp.createReplicaSetDB(username, serverInfo.regions, serverInfo.machineTypes, Number(serverInfo.diskSize), serverData);
             res.end(JSON.stringify({'ok': 1}));
         }
         else {
