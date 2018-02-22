@@ -6,7 +6,7 @@ replicaSetName=${4:-replicaSet}
 members=`cat membersList.txt`
 
 
-docker exec -t $containerName \
+sudo docker exec -t $containerName \
     mongo admin -u $rootUser -p $rootPass --eval " \
         rs.initiate({ \
             _id: '$replicaSetName', \
@@ -14,9 +14,6 @@ docker exec -t $containerName \
         })"
 
 
-
-
-#
 # docker exec -t repl0 \
 #     mongo --eval " \
 #     rs.initiate({ \
