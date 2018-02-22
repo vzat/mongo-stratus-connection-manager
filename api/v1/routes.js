@@ -86,6 +86,7 @@ routes.post('/create/replicaset/db', async (req, res) => {
         // ---> rootUser
         // ---> rootPass
         // ---> mongoVersion
+        // ---> replicaSetName
         const serverData = req.body.serverData;
 
         if (!serverData ||
@@ -93,7 +94,8 @@ routes.post('/create/replicaset/db', async (req, res) => {
             !serverData.serverPorts ||
             !serverData.rootUser ||
             !serverData.rootPass ||
-            !serverData.mongoVersion)
+            !serverData.mongoVersion ||
+            !serverData.replicaSetName)
             throw new Error('Invalid Server Data');
 
         // Check correct no of replicas
