@@ -12,4 +12,4 @@ services:
       volumes:
           - /data/db:/data/db
       restart: always
-      command: mongod --replSet "${REPLICA_SET_NAME}"
+      command: bash -c "echo "KEYFILE" > mongo.key && chmod 700 mongo.key && mongod --replSet "${REPLICA_SET_NAME}" --keyFile mongo.key"
