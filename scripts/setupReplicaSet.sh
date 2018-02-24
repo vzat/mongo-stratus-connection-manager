@@ -13,9 +13,21 @@ sudo docker exec -t $containerName \
             members: $members
         })"
 
-sudo docker exec -t $containerName \
-    mongo admin --eval " \
-    db.admin.find({})"
+
+# Wait for Replica Set to setup
+running='"ok" : 1'
+
+status=$(sudo docker exec -t $containerName \
+          mongo admin --eval "rs.status()")
+
+while [[ $status != *$running* ]]
+do
+    echo "Waiting for replica set to finish setting up..."
+    sleep 5
+    status=$(sudo docker exec -t $containerName \
+              mongo admin --eval "rs.status()")
+done
+
 
 # Create Root User
 sudo docker exec -t $containerName \
@@ -27,4 +39,13 @@ sudo docker exec -t $containerName \
                 role: 'root', \
                 db: 'admin' \
             }] \
-        })"
+        });"
+
+        # text=abcdef
+        #
+        # if [[ $text == *cd* ]]
+        # then
+        #         echo "YES"
+        # else
+        #         echo "NO"
+        # fi;
