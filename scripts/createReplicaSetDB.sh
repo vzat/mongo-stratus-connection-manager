@@ -15,6 +15,8 @@ echo "REPLICA_SET_NAME=$replicaSetName" >> .env
 
 sudo mkdir -p /data/db
 
+sudo docker-compose build
+
 sudo docker-compose up -d
 
 sudo docker port $containerName
