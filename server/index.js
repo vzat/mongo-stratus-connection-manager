@@ -43,7 +43,7 @@ module.exports = new Promise((resolve, reject) => {
     // };
     //
     // gcp.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
-
+    //
     // const db = require('../lib/db');
     //
     // // Save Server to DB
@@ -60,7 +60,51 @@ module.exports = new Promise((resolve, reject) => {
     // };
     // db.addDBToUser('jsmith', database);
 
-
+    // const hosts = [
+    //     '123.123.123.123',
+    //     '456.465.456',
+    //     '147.159.167'
+    // ];
+    //
+    // const serverData = {
+    //     serverPorts: [
+    //         27017,
+    //         27018,
+    //         27019
+    //     ],
+    //     rootUser: 'test',
+    //     rootPass: 'test',
+    //     serverName: 'test'
+    // }
+    //
+    // const dbUsername = 'jsmith';
+    //
+    // // Save Server to DB
+    // const database1 = {
+    //     serverName: serverData.serverName,
+    //     name: 'local',
+    //     ip: hosts,
+    //     port: serverData.serverPorts,
+    //     users: {
+    //         username: serverData.rootUser,
+    //         password: serverData.rootPass
+    //     },
+    //     type: 'replica-set'
+    // };
+    // db.addDBToUser(dbUsername, database1);
+    //
+    // const database2 = {
+    //     serverName: serverData.serverName,
+    //     name: 'admin',
+    //     ip: hosts,
+    //     port: serverData.serverPorts,
+    //     users: {
+    //         username: serverData.rootUser,
+    //         password: serverData.rootPass
+    //     },
+    //     type: 'replica-set'
+    // };
+    // db.addDBToUser(dbUsername, database2);
 
 
     resolve(app);
