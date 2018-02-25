@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+    mongoRepl:
+      image: mongoconf
+      build:
+          context: .
+          args:
+              - MONGO_VERSION=${MONGO_VERSION}
+      container_name: ${CONTAINER_NAME}
+      ports:
+          - ${CONTAINER_PORT}:27019
+      volumes:
+          - /data/db:/data/db
+      restart: always
+      command: mongod --configsvr --replSet "${REPLICA_SET_NAME}" --keyFile /home/mongo.key
