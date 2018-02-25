@@ -119,4 +119,77 @@ routes.post('/create/replicaset/db', async (req, res) => {
     }
 });
 
+routes.post('/create/shardedcluster/db', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.body.username;
+
+        if (!username) throw new Error('Invalid username');
+
+        // ServerInfo
+        // ---> cloudPlatform
+        // ---> regions
+        // ------> configServers[]
+        // ------> shards{}
+        // ---------> shard1[]
+        // ---------> shard2[]
+        // ------> mongos[]
+        // ---> machineTypes
+        // ------> configServers[]
+        // ------> shards{}
+        // ---------> shard1[]
+        // ---------> shard2[]
+        // ------> mongos[]
+        // ---> diskSizes
+        // ------> configServers
+        // ------> shards{}
+        // ---------> shard1[]
+        // ---------> shard2[]
+        // ------> mongos
+        const serverInfo = req.body.serverInfo;
+
+        if (!serverInfo ||
+            !serverInfo.cloudPlatform ||
+            !serverInfo.regions ||
+            !serverInfo.machineTypes ||
+            !serverInfo.diskSizes)
+            throw new Error('Invalid Server Info');
+
+
+        // ServerData
+        // ---> serverName
+        // ---> serverPorts
+        // ------> configServers[]
+        // ------> shards{}
+        // ---------> shard1[]
+        // ---------> shard2[]
+        // ------> mongos[]
+        // ---> rootUser
+        // ---> rootPass
+        // ---> mongoVersion
+        const serverData = req.body.serverData;
+
+        if (!serverData ||
+            !serverData.serverName ||
+            !serverData.serverPorts ||
+            !serverData.rootUser ||
+            !serverData.rootPass ||
+            !serverData.mongoVersion)
+            throw new Error('Invalid Server Data');
+
+        if (serverInfo.cloudPlatform === 'gcp') {
+            gcp.createShardedClusterDB(username, serverInfo.regions, serverInfo.machineTypes, serverInfo.diskSizes, serverData);
+            res.end(JSON.stringify({'ok': 1}));
+        }
+        else {
+            throw new Error('Invalid Cloud Platform');
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 module.exports = routes;
