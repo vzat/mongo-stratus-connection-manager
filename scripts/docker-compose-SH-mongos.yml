@@ -13,4 +13,4 @@ services:
       volumes:
           - /data/db:/data/db
       restart: always
-      command: mongod --configdb "${REPLICA_SET_NAME}/${CONF_IP}" --keyFile /home/mongo.key
+      command: mongos --configdb "${REPLICA_SET_NAME}/${CONF_IP}" --keyFile /home/mongo.key
