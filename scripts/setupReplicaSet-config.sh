@@ -7,9 +7,10 @@ members=`cat membersList.txt`
 
 # Setup Replica Set
 sudo docker exec -t $containerName \
-    mongo --eval " \
+    mongo --port 27019 --eval " \
         rs.initiate({ \
             _id: '$replicaSetName', \
+            configsvr: true, \
             members: $members
         })"
 
@@ -18,25 +19,25 @@ sudo docker exec -t $containerName \
 running='"ok" : 1'
 
 status=$(sudo docker exec -t $containerName \
-          mongo admin --eval "rs.status()")
+          mongo admin --port 27019 --eval "rs.status()")
 
 while [[ $status != *$running* ]]
 do
     echo "Waiting for replica set to finish setting up..."
     sleep 5
     status=$(sudo docker exec -t $containerName \
-              mongo admin --eval "rs.status()")
+              mongo admin --port 27019 --eval "rs.status()")
 done
 
 
-# Create Root User
-sudo docker exec -t $containerName \
-    mongo admin --eval " \
-        db.createUser({ \
-            user: '$rootUser', \
-            pwd: '$rootPass', \
-            roles: [{ \
-                role: 'root', \
-                db: 'admin' \
-            }] \
-        });"
+# # Create Root User
+# sudo docker exec -t $containerName \
+#     mongo admin --eval " \
+#         db.createUser({ \
+#             user: '$rootUser', \
+#             pwd: '$rootPass', \
+#             roles: [{ \
+#                 role: 'root', \
+#                 db: 'admin' \
+#             }] \
+#         });"
