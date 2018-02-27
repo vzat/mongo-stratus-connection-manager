@@ -7,7 +7,7 @@ replicaSetName=${6:-replicaSet}
 confIP=${7:-configIP}
 containerName=$serverName
 
-shards=`cat shards.txt`
+# shards=`cat shards.txt`
 
 echo "MONGO_INITDB_ROOT_USERNAME=$rootUser" > .env
 echo "MONGO_INITDB_ROOT_PASSWORD=$rootPass" >> .env
@@ -25,21 +25,21 @@ sudo docker-compose up -d
 
 sudo docker port $containerName
 
-# Add Shards to router
-while read -r shard
-do
-    sudo docker exec -t $containerName \
-        mongo --eval "sh.addShard('$shard');"
-done <<< "$shards"
-
-# Add Root User
-sudo docker exec -t $containerName \
-    mongo admin --eval " \
-        db.createUser({ \
-            user: '$rootUser', \
-            pwd: '$rootPass', \
-            roles: [{ \
-                role: 'root', \
-                db: 'admin' \
-            }] \
-        });"
+# # Add Shards to router
+# while read -r shard
+# do
+#     sudo docker exec -t $containerName \
+#         mongo --eval "sh.addShard('$shard');"
+# done <<< "$shards"
+#
+# # Add Root User
+# sudo docker exec -t $containerName \
+#     mongo admin --eval " \
+#         db.createUser({ \
+#             user: '$rootUser', \
+#             pwd: '$rootPass', \
+#             roles: [{ \
+#                 role: 'root', \
+#                 db: 'admin' \
+#             }] \
+#         });"
