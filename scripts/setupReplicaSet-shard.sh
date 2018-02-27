@@ -15,12 +15,12 @@ sudo docker exec -t $containerName \
 
 
 # Wait for Replica Set to setup
-running='"ok" : 1'
+notRunning='"ok" : 0'
 
 status=$(sudo docker exec -t $containerName \
           mongo admin --port 27018 --eval "rs.status()")
 
-while [[ $status != *$running* ]]
+while [[ $status == *$notRunning* ]]
 do
     echo "Waiting for replica set to finish setting up..."
     sleep 5
