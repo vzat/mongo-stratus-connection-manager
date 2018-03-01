@@ -44,7 +44,7 @@ module.exports = new Promise((resolve, reject) => {
     //
     // gcp.createSingleNodeDB('jsmith', 'us3', 'micro', 10, serverData);
     //
-    // const db = require('../lib/db');
+    const db = require('../lib/db');
     //
     // // Save Server to DB
     // const database = {
@@ -105,6 +105,25 @@ module.exports = new Promise((resolve, reject) => {
     //     type: 'replica-set'
     // };
     // db.addDBToUser(dbUsername, database2);
+
+    const database1 = {
+        serverName: 'rsTest',
+        name: 'local',
+        ip: ['35.189.84.31'],
+        // configIPs: configHosts,
+        // shardsIPs: shardsHosts,
+        port: [27017],
+        // configPorts: serverData.serverPorts.configPorts,
+        // shardsPorts: serverData.serverPorts.shards,
+        // keyfile: keyfile
+        users: {
+            username: 'admin',
+            password: 'pass',
+            role: 'root'
+        },
+        type: 'sharded-cluster'
+    };
+    db.addDBToUser('jsmith', database1);
 
 
     resolve(app);
