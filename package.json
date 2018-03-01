@@ -1,6 +1,6 @@
 {
   "name": "mongo-stratus-connection-manager",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "MongoStratus Connection Manager",
   "main": "index.js",
   "scripts": {
