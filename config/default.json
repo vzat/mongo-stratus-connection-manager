@@ -1,0 +1,28 @@
+{
+    "services": {
+        "mongo-stratus-data-retriever": {
+            "ip": "localhost",
+            "port": 5000
+        },
+        "mongo-stratus-login-manager": {
+            "server": {
+                "ip": "localhost",
+                "port": 3000
+            },
+            "client": {
+                "ip": "localhost",
+                "port": 3001
+            }
+        },
+        "mongo-stratus-connection-manager": {
+            "server": {
+                "ip": "localhost",
+                "port": 4000
+            },
+            "client": {
+                "ip": "localhost",
+                "port": 4001
+            }
+        }
+    }
+}

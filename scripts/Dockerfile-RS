@@ -1,0 +1,7 @@
+ARG MONGO_VERSION=latest
+FROM mongo:${MONGO_VERSION}
+
+COPY ./mongo.key /home/mongo.key
+
+RUN chmod 700 /home/mongo.key && \
+    chown mongodb:mongodb /home/mongo.key

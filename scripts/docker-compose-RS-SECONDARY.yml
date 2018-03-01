@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+    mongoRepl:
+      image: mongo:${MONGO_VERSION}
+      container_name: ${CONTAINER_NAME}
+      ports:
+          - ${CONTAINER_PORT}:27017
+      volumes:
+          - /data/db:/data/db
+      restart: always
+      command: bash -c "echo "KEYFILE" > mongo.key && chmod 700 mongo.key && mongod --replSet "${REPLICA_SET_NAME}" --keyFile mongo.key"
