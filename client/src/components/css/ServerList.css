@@ -1,3 +1,7 @@
 .ServerList {
     padding: 25px;
 }
+
+.card {
+    border-style: dashed;
+}
