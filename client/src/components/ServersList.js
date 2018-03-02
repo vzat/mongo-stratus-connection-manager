@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 
 import './css/ServerList.css';
 
-import { Card, Icon, Segment, Image } from 'semantic-ui-react';
+import { Grid, Card, Icon, Segment, Image } from 'semantic-ui-react';
 
+import logo from './resources/images/MongoStratusLogo.svg';
 import gcp from './resources/images/gcp.svg';
 import azure from './resources/images/azure.svg';
 import aws from './resources/images/aws.svg';
@@ -66,8 +67,12 @@ class ServerList extends Component {
 
     return (
       <div className = "ServerList">
-          <Card.Group doubling stackable itemsPerRow = {5} maxWidth = {10} items = {items} />
-          <Segment.Group items = {items} />
+          <Image src = {logo} />
+          <Grid centered>
+              <Grid.Column>
+                  <Card.Group doubling stackable itemsPerRow = {5} items = {items} />
+              </Grid.Column>
+          </Grid>
       </div>
     );
   }
