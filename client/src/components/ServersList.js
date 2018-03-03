@@ -31,15 +31,43 @@ class ServerList extends Component {
             description: 'Single Node',
             color: 'green',
             href: '#3'
+        },
+        {
+            image: <Image src = {gcp} />,
+            header: 'ServerName',
+            description: 'Single Node',
+            color: 'green',
+            href: '#1'
+        },
+        {
+            image: <Image src = {azure} />,
+            header: 'ServerName',
+            description: 'Single Node',
+            color: 'green',
+            href: '#2'
+        },
+        {
+            image: <Image src = {aws} />,
+            header: 'ServerName',
+            description: 'Single Node',
+            color: 'green',
+            href: '#3'
+        },
+        {
+            image: <Image src = {aws} />,
+            header: 'ServerName',
+            description: 'Single Node',
+            color: 'green',
+            href: '#3'
         }
     ];
 
     return (
       <div className = "ServerList">
-          <Button color = "green"> New Server </Button>
+          <Button color = "green" onClick = {() => this.props.setModalState(true) }> New Server </Button>
           <Divider hidden />
 
-          <Card.Group doubling stackable itemsPerRow = {5} items = {items} />
+          <Card.Group doubling stackable items = {items} />
       </div>
     );
   }
