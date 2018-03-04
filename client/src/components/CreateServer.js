@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/CreateServer.css';
 
-import { Modal, Grid, Input, Form, Radio, Image, Label, Menu, Header, Dropdown, Accordion, Button } from 'semantic-ui-react';
+import { Modal, Grid, Input, Form, Radio, Image, Label, Menu, Header, Dropdown, Accordion, Table, Divider, Button } from 'semantic-ui-react';
 
 import gcp from './resources/images/gcp.svg';
 import azure from './resources/images/azure.svg';
@@ -13,7 +13,18 @@ class CreateServer extends Component {
         serverName: '',
         platform: '',
         mongoVersion: '3.6',
-        serverType: ''
+        serverType: '',
+        rootUser: '',
+        rootPass: '',
+        singleNode: {
+          diskSize: 10,
+          servers: [{
+            serverName: 'Node',
+            region: 'us3',
+            machineType: 'micro'
+          }]
+        },
+        disableCreate: true
     };
 
     handleChange = (event) => {
@@ -24,56 +35,129 @@ class CreateServer extends Component {
         this.setState({ [comp.name]: comp.value });
     };
 
+    handleSingleNode = (event, comp) => {
+        let singleNode = this.state.singleNode;
+
+        if (comp.name === 'diskSize') {
+            singleNode['diskSize'] = comp.value;
+        }
+        else {
+            const id = comp.id;
+            const field = comp.name;
+            const value = comp.value;
+
+            let servers = singleNode.servers;
+            servers[id][field] = value;
+            singleNode.servers = servers;
+        }
+
+        this.setState({ singleNode: singleNode });
+    };
+
+    componentDidUpdate = () => {
+        const state = this.state;
+        if (state.serverName &&
+            state.platform &&
+            state.serverType &&
+            state.rootUser &&
+            state.rootPass) {
+                if (state.disableCreate) {
+                    this.setState({ disableCreate: false });
+                }
+        }
+        else if (!state.disableCreate) {
+            this.setState({ disableCreate: true });
+        }
+    };
+
     render() {
         const open = this.props.open;
 
         const mongoVersions = [
-        {
-            text: '3.0',
-            value: '3.0'
-        },
-        {
-            text: '3.2',
-            value: '3.2'
-        },
-        {
-            text: '3.4',
-            value: '3.4'
-        },
-        {
-            text: '3.6',
-            value: '3.6'
-        }];
+            {
+                text: '3.0',
+                value: '3.0'
+            },
+            {
+                text: '3.2',
+                value: '3.2'
+            },
+            {
+                text: '3.4',
+                value: '3.4'
+            },
+            {
+                text: '3.6',
+                value: '3.6'
+            }
+        ];
 
-        const panels = [
-        {
-            title: {
-                content: 'Node 1',
-                key: 'title'
+        const regions = [
+            {
+                text: 'us1',
+                value: 'us1'
             },
-            content: {
-                content: <Input fluid />,
-                key: 'content'
-            }
-        },
-        {
-            title: {
-                content: 'Title',
-                key: 'title'
+            {
+                text: 'us2',
+                value: 'us2'
             },
-            content: {
-                content: <Input fluid />
-            }
-        },
-        {
-            title: {
-                content: 'Title',
-                key: 'title'
+            {
+                text: 'us3',
+                value: 'us3'
             },
-            content: {
-                content: <Input fluid />
+            {
+                text: 'eu1',
+                value: 'eu1'
+            },
+            {
+                text: 'eu2',
+                value: 'eu2'
+            },
+            {
+                text: 'eu3',
+                value: 'eu3'
             }
-        }];
+        ];
+
+        const machineTypes = [
+          {
+              text: 'micro',
+              value: 'micro'
+          },
+          {
+              text: 'small',
+              value: 'small'
+          },
+          {
+              text: 'standard',
+              value: 'standard'
+          }
+        ];
+
+        const singleNodeServers = this.state.singleNode.servers;
+        const singleNodeTable = singleNodeServers.map((server, index) => (
+            <Grid.Row columns = 'equal' key = { 'singleNode-' + server } >
+                <Grid.Column> <b> {server.serverName} </b> </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid
+                        id = { index }
+                        name = 'region'
+                        options = { regions }
+                        defaultValue = 'us3'
+                        onChange = { this.handleSingleNode } />
+                </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid
+                        id = { index }
+                        name = 'machineType'
+                        options = { machineTypes }
+                        defaultValue = 'micro'
+                        onChange = { this.handleSingleNode } />
+                </Grid.Column>
+            </Grid.Row>
+        ));
+
+        console.log(this.state.singleNode);
 
         return (
           <div className = "CreateServer">
@@ -176,20 +260,37 @@ class CreateServer extends Component {
                                       </Menu>
                                   </Grid.Column>
                               </Grid.Row>
+                              </Grid>
 
                               { this.state.platform && this.state.serverType === 'singleNode' &&
-                                  <Grid.Row>
-                                      <Grid.Column>
-                                          <Header dividing> Single Node </Header>
-                                          <Accordion defaultActiveIndex = {0} panels = { panels } fluid styled />
-                                      </Grid.Column>
-                                  </Grid.Row>
+                                  <div>
+                                      <Divider hidden />
+                                      <Header dividing> Single Node </Header>
+                                      <Grid celled verticalAlign = 'middle' stackable doubling >
+                                          { singleNodeTable }
+                                          <Grid.Row columns = 'equal' >
+                                              <Grid.Column cols = '2'>
+                                                  <b> Disk Size </b>
+                                              </Grid.Column>
+
+                                              <Grid.Column>
+                                                  <Input fluid
+                                                      type = 'number'
+                                                      min = '10'
+                                                      name = 'diskSize'
+                                                      value = { this.state.singleNode.diskSize }
+                                                      onChange = { this.handleSingleNode }
+                                                  />
+                                              </Grid.Column>
+                                          </Grid.Row>
+                                      </Grid>
+                                  </div>
                               }
 
-                              </Grid>
 
                               { this.state.platform && this.state.serverType &&
                                   <div>
+                                      <Divider hidden />
                                       <Header dividing> Admin Credentials </Header>
                                       <Grid>
                                           <Grid.Row columns = 'equal'>
@@ -220,7 +321,7 @@ class CreateServer extends Component {
 
 
                       <Modal.Actions>
-
+                          <Button color = 'green' disabled = { this.state.disableCreate } > Create Instance </Button>
                       </Modal.Actions>
               </Modal>
           </div>
@@ -230,6 +331,32 @@ class CreateServer extends Component {
 
 export default CreateServer;
 
+// <Table fixed definition >
+//     <Table.Header>
+//         <Table.Row>
+//             <Table.HeaderCell />
+//             <Table.HeaderCell> Region </Table.HeaderCell>
+//             <Table.HeaderCell> Machine Type </Table.HeaderCell>
+//         </Table.Row>
+//     </Table.Header>
+//
+//     { singleNodeTable }
+//
+// </Table>
+
+// <Table.Footer fullWidth>
+//     <Table.Row>
+//         <Table.HeaderCell>
+//             <b> Disk Size </b>
+//         </Table.HeaderCell>
+//         <Table.HeaderCell/>
+//         <Table.HeaderCell>
+//             <Input fluid type = 'number' min = '10' size = 'small' />
+//         </Table.HeaderCell>
+//     </Table.Row>
+// </Table.Footer>
+
+// <Accordion defaultActiveIndex = {0} panels = { panels } fluid styled />
 
 //
 // <Form>
