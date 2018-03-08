@@ -24,6 +24,25 @@ class CreateServer extends Component {
             machineType: 'micro'
           }]
         },
+        replicaSet: {
+            diskSize: 10,
+            servers: [
+                {
+                    serverName: 'Primary',
+                    region: 'us3',
+                    machineType: 'micro'
+                },
+                {
+                    serverName: 'Secondary',
+                    region: 'us3',
+                    machineType: 'micro'
+                },
+                {
+                    serverName: 'Secondary',
+                    region: 'us3',
+                    machineType: 'micro'
+                }]
+        },
         disableCreate: true
     };
 
@@ -52,6 +71,25 @@ class CreateServer extends Component {
         }
 
         this.setState({ singleNode: singleNode });
+    };
+
+    handleReplicaSet = (event, comp) => {
+        let replicaSet = this.state.replicaSet;
+
+        if (comp.name === 'diskSize') {
+            replicaSet['diskSize'] = comp.value;
+        }
+        else {
+            const id = comp.id;
+            const field = comp.name;
+            const value = comp.value;
+
+            let servers = replicaSet.servers;
+            servers[id][field] = value;
+            replicaSet.servers = servers;
+        }
+
+        this.setState({ replicaSet: replicaSet });
     };
 
     componentDidUpdate = () => {
@@ -134,6 +172,45 @@ class CreateServer extends Component {
           }
         ];
 
+        const diskSizes = [
+          {
+              text: '10',
+              value: 10
+          },
+          {
+              text: '15',
+              value: 15
+          },
+          {
+              text: '20',
+              value: 20
+          },
+          {
+              text: '25',
+              value: 25
+          },
+          {
+              text: '30',
+              value: 30
+          },
+          {
+              text: '35',
+              value: 35
+          },
+          {
+              text: '40',
+              value: 40
+          },
+          {
+              text: '45',
+              value: 45
+          },
+          {
+              text: '50',
+              value: 50
+          },
+        ];
+
         const singleNodeServers = this.state.singleNode.servers;
         const singleNodeTable = singleNodeServers.map((server, index) => (
             <Grid.Row columns = 'equal' key = { 'singleNode-' + server } >
@@ -154,10 +231,48 @@ class CreateServer extends Component {
                         defaultValue = 'micro'
                         onChange = { this.handleSingleNode } />
                 </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid
+                        id = { index }
+                        name = 'diskSize'
+                        options = { diskSizes }
+                        value = { this.state.singleNode.diskSize }
+                        onChange = { this.handleSingleNode } />
+                </Grid.Column>
             </Grid.Row>
         ));
 
-        console.log(this.state.singleNode);
+        const replicaSetServers = this.state.replicaSet.servers;
+        const replicaSetTable = replicaSetServers.map((server, index) => (
+            <Grid.Row columns = 'equal' key = { 'replicaSet-' + server } >
+                <Grid.Column> <b> {server.serverName} </b> </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid
+                        id = { index }
+                        name = 'region'
+                        options = { regions }
+                        defaultValue = 'us3'
+                        onChange = { this.handleReplicaSet } />
+                </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid
+                        id = { index }
+                        name = 'machineType'
+                        options = { machineTypes }
+                        defaultValue = 'micro'
+                        onChange = { this.handleReplicaSet } />
+                </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid
+                        id = { index }
+                        name = 'diskSize'
+                        options = { diskSizes }
+                        value = { this.state.replicaSet.diskSize }
+                        disabled = { index !== 0 }
+                        onChange = { this.handleReplicaSet } />
+                </Grid.Column>
+            </Grid.Row>
+        ));
 
         return (
           <div className = "CreateServer">
@@ -267,22 +382,29 @@ class CreateServer extends Component {
                                       <Divider hidden />
                                       <Header dividing> Single Node </Header>
                                       <Grid celled verticalAlign = 'middle' stackable doubling >
-                                          { singleNodeTable }
-                                          <Grid.Row columns = 'equal' >
-                                              <Grid.Column cols = '2'>
-                                                  <b> Disk Size </b>
-                                              </Grid.Column>
-
-                                              <Grid.Column>
-                                                  <Input fluid
-                                                      type = 'number'
-                                                      min = '10'
-                                                      name = 'diskSize'
-                                                      value = { this.state.singleNode.diskSize }
-                                                      onChange = { this.handleSingleNode }
-                                                  />
-                                              </Grid.Column>
+                                          <Grid.Row columns = 'equal' key = 'singleNode-header' >
+                                              <Grid.Column/>
+                                              <Grid.Column> <b> Region </b> </Grid.Column>
+                                              <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                                              <Grid.Column> <b> Disk Size </b> </Grid.Column>
                                           </Grid.Row>
+                                          { singleNodeTable }
+                                      </Grid>
+                                  </div>
+                              }
+
+                              { this.state.platform && this.state.serverType === 'replicaSet' &&
+                                  <div>
+                                      <Divider hidden />
+                                      <Header dividing> Replica Set </Header>
+                                      <Grid celled verticalAlign = 'middle' stackable doubling >
+                                          <Grid.Row columns = 'equal' key = 'replicaSet-header' >
+                                              <Grid.Column/>
+                                              <Grid.Column> <b> Region </b> </Grid.Column>
+                                              <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                                              <Grid.Column> <b> Disk Size </b> </Grid.Column>
+                                          </Grid.Row>
+                                          { replicaSetTable }
                                       </Grid>
                                   </div>
                               }
@@ -330,6 +452,27 @@ class CreateServer extends Component {
 }
 
 export default CreateServer;
+
+// <Divider hidden />
+// <Header dividing> Single Node </Header>
+// <Grid celled verticalAlign = 'middle' stackable doubling >
+//     { singleNodeTable }
+//     <Grid.Row columns = 'equal' >
+//         <Grid.Column cols = '2'>
+//             <b> Disk Size </b>
+//         </Grid.Column>
+//
+//         <Grid.Column>
+//             <Input fluid
+//                 type = 'number'
+//                 min = '10'
+//                 name = 'diskSize'
+//                 value = { this.state.singleNode.diskSize }
+//                 onChange = { this.handleSingleNode }
+//             />
+//         </Grid.Column>
+//     </Grid.Row>
+// </Grid>
 
 // <Table fixed definition >
 //     <Table.Header>
