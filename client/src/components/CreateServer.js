@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 
 import './css/CreateServer.css';
 
-import { Modal, Grid, Input, Image, Menu, Header, Dropdown, Divider, Button } from 'semantic-ui-react';
+import { Modal, Grid, Input, Image, Menu, Header, Dropdown, Divider, Button, Tab } from 'semantic-ui-react';
 
 import gcp from './resources/images/gcp.svg';
 import azure from './resources/images/azure.svg';
 import aws from './resources/images/aws.svg';
+
+import gcpRegions from './resources/gcpRegions.json';
 
 class CreateServer extends Component {
     state = {
@@ -179,9 +181,34 @@ class CreateServer extends Component {
                 }
                 break;
             case 'replica':
+                const index = comp.replicaid;
+                if (comp.name === 'diskSize') {
+                    shardedCluster.replicas[index]['diskSize'] = comp.value;
+                }
+                else {
+                    const id = comp.id;
+                    const field = comp.name;
+                    const value = comp.value;
+
+                    let servers = shardedCluster.replicas[index].servers;
+                    servers[id][field] = value;
+                    shardedCluster.replicas[index].servers = servers;
+                }
                 break;
             default:
                 // Router
+                if (comp.name === 'diskSize') {
+                    shardedCluster.router['diskSize'] = comp.value;
+                }
+                else {
+                    const id = comp.id;
+                    const field = comp.name;
+                    const value = comp.value;
+
+                    let servers = shardedCluster.router.servers;
+                    servers[id][field] = value;
+                    shardedCluster.servers = servers;
+                }
                 break;
         }
 
@@ -229,6 +256,11 @@ class CreateServer extends Component {
         if (comp.type === 'config') {
             shardedCluster.config.servers.push(newServer);
         }
+        else if (comp.type === 'replica') {
+            const index = comp.id;
+
+            shardedCluster.replicas[index].servers.push(newServer);
+        }
 
         this.setState({ shardedCluster: shardedCluster });
     };
@@ -247,6 +279,47 @@ class CreateServer extends Component {
         if (comp.type === 'config') {
             shardedCluster.config.servers.splice(comp.id, 1);
         }
+        else if (comp.type === 'replica') {
+            const replicaIndex = comp.replicaid;
+
+            shardedCluster.replicas[replicaIndex].servers.splice(comp.id, 1);
+        }
+
+        this.setState({ shardedCluster: shardedCluster });
+    };
+
+    addShard = (event, comp) => {
+        let shardedCluster = this.state.shardedCluster;
+
+        const newShard = {
+            diskSize: 10,
+            servers: [
+                {
+                    serverName: 'Primary',
+                    region: 'us3',
+                    machineType: 'micro'
+                },
+                {
+                    serverName: 'Secondary',
+                    region: 'us3',
+                    machineType: 'micro'
+                },
+                {
+                    serverName: 'Secondary',
+                    region: 'us3',
+                    machineType: 'micro'
+                }]
+        };
+
+        shardedCluster.replicas.push(newShard);
+
+        this.setState({ shardedCluster: shardedCluster });
+    };
+
+    removeShard = (event, comp) => {
+        let shardedCluster = this.state.shardedCluster;
+
+        shardedCluster.replicas.splice(comp.id, 1);
 
         this.setState({ shardedCluster: shardedCluster });
     };
@@ -273,32 +346,40 @@ class CreateServer extends Component {
             }
         ];
 
-        const regions = [
+        const tempRegions = [
             {
                 text: 'us1',
-                value: 'us1'
+                value: 'us1',
+                flag: 'us'
             },
             {
                 text: 'us2',
-                value: 'us2'
+                value: 'us2',
+                flag: 'us'
             },
             {
                 text: 'us3',
-                value: 'us3'
+                value: 'us3',
+                flag: 'us'
             },
             {
                 text: 'eu1',
-                value: 'eu1'
+                value: 'eu1',
+                flag: 'eu'
             },
             {
                 text: 'eu2',
-                value: 'eu2'
+                value: 'eu2',
+                flag: 'eu'
             },
             {
                 text: 'eu3',
-                value: 'eu3'
+                value: 'eu3',
+                flag: 'eu'
             }
         ];
+
+        const regions = this.state.platform === 'gcp' ? gcpRegions : tempRegions;
 
         const machineTypes = [
           {
@@ -317,43 +398,44 @@ class CreateServer extends Component {
 
         const diskSizes = [
           {
-              text: '10',
+              text: '10 GB',
               value: 10
           },
           {
-              text: '15',
+              text: '15 GB',
               value: 15
           },
           {
-              text: '20',
+              text: '20 GB',
               value: 20
           },
           {
-              text: '25',
+              text: '25 GB',
               value: 25
           },
           {
-              text: '30',
+              text: '30 GB',
               value: 30
           },
           {
-              text: '35',
+              text: '35 GB',
               value: 35
           },
           {
-              text: '40',
+              text: '40 GB',
               value: 40
           },
           {
-              text: '45',
+              text: '45 GB',
               value: 45
           },
           {
-              text: '50',
+              text: '50 GB',
               value: 50
           },
         ];
 
+        // Single Node
         const singleNodeServers = this.state.singleNode.servers;
         const singleNodeTable = singleNodeServers.map((server, index) => (
             <Grid.Row columns = 'equal' key = { 'singleNode-' + server } >
@@ -375,7 +457,7 @@ class CreateServer extends Component {
                         onChange = { this.handleSingleNode } />
                 </Grid.Column>
                 <Grid.Column>
-                    <Dropdown selection fluid
+                    <Dropdown selection fluid search
                         id = { index }
                         name = 'diskSize'
                         options = { diskSizes }
@@ -385,6 +467,7 @@ class CreateServer extends Component {
             </Grid.Row>
         ));
 
+        // Replica Set
         const replicaSetServers = this.state.replicaSet.servers;
         const replicaSetTable = replicaSetServers.map((server, index) => (
             <Grid.Row columns = 'equal' key = { 'replicaSet-' + server } >
@@ -417,7 +500,7 @@ class CreateServer extends Component {
                         onChange = { this.handleReplicaSet } />
                 </Grid.Column>
                 <Grid.Column>
-                    <Dropdown selection fluid
+                    <Dropdown selection fluid search
                         id = { index }
                         name = 'diskSize'
                         options = { diskSizes }
@@ -428,6 +511,7 @@ class CreateServer extends Component {
             </Grid.Row>
         ));
 
+        // Sharded Clusters
         const shardedClusterConfigServers = this.state.shardedCluster.config.servers;
         const shardedClusterConfigTable = shardedClusterConfigServers.map((server, index) => (
             <Grid.Row columns = 'equal' key = { 'shardedCluster-config-' + server } >
@@ -463,7 +547,7 @@ class CreateServer extends Component {
                         onChange = { this.handleShardedCluster } />
                 </Grid.Column>
                 <Grid.Column>
-                    <Dropdown selection fluid
+                    <Dropdown selection fluid search
                         id = { index }
                         name = 'diskSize'
                         type = 'config'
@@ -479,7 +563,19 @@ class CreateServer extends Component {
         const shardedClusterReplicasTables = shardedClusterReplicas.map((replica, replicaIndex) => (
             <Grid celled verticalAlign = 'middle' stackable doubling >
                 <Grid.Row columns = 'equal' key = 'shardedCluster-config-header' >
-                    <Grid.Column> <b> Config Servers </b> </Grid.Column>
+                    <Grid.Column>
+                        <b> Shard { replicaIndex + 1 } </b>
+                        { replicaIndex > 1 &&
+                            <Button basic negative
+                                id = { replicaIndex }
+                                floated = 'right'
+                                icon = 'remove'
+                                size = 'mini'
+                                type = 'replica'
+                                onClick = { this.removeShard }
+                            />
+                        }
+                    </Grid.Column>
                     <Grid.Column> <b> Region </b> </Grid.Column>
                     <Grid.Column> <b> Machine Type </b> </Grid.Column>
                     <Grid.Column> <b> Disk Size </b> </Grid.Column>
@@ -491,6 +587,7 @@ class CreateServer extends Component {
                                 <b> { server.serverName } </b>
                                 { serverIndex > 2 &&
                                     <Button basic negative
+                                        replicaid = { replicaIndex }
                                         id = { serverIndex }
                                         floated = 'right'
                                         icon = 'remove'
@@ -503,6 +600,7 @@ class CreateServer extends Component {
                             <Grid.Column>
                                 <Dropdown selection fluid
                                     id = { serverIndex }
+                                    replicaid = { replicaIndex }
                                     name = 'region'
                                     type = 'replica'
                                     options = { regions }
@@ -512,6 +610,7 @@ class CreateServer extends Component {
                             <Grid.Column>
                                 <Dropdown selection fluid
                                     id = { serverIndex }
+                                    replicaid = { replicaIndex }
                                     name = 'machineType'
                                     type = 'replica'
                                     options = { machineTypes }
@@ -519,8 +618,9 @@ class CreateServer extends Component {
                                     onChange = { this.handleShardedCluster } />
                             </Grid.Column>
                             <Grid.Column>
-                                <Dropdown selection fluid
+                                <Dropdown selection fluid search
                                     id = { serverIndex }
+                                    replicaid = { replicaIndex }
                                     name = 'diskSize'
                                     type = 'replica'
                                     options = { diskSizes }
@@ -544,6 +644,94 @@ class CreateServer extends Component {
                 </Grid.Row>
             </Grid>
         ));
+
+        const shardedClusterRouterServers = this.state.shardedCluster.router.servers;
+        const shardedClusterRouterTable = shardedClusterRouterServers.map((server, index) => (
+            <Grid.Row columns = 'equal' key = { 'singleNode-router-' + server } >
+                <Grid.Column> <b> {server.serverName} </b> </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid
+                        id = { index }
+                        name = 'region'
+                        options = { regions }
+                        value = { this.state.shardedCluster.router.servers[index].region }
+                        onChange = { this.handleShardedCluster } />
+                </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid
+                        id = { index }
+                        name = 'machineType'
+                        options = { machineTypes }
+                        value = { this.state.shardedCluster.router.servers[index].machineType }
+                        onChange = { this.handleShardedCluster } />
+                </Grid.Column>
+                <Grid.Column>
+                    <Dropdown selection fluid search
+                        id = { index }
+                        name = 'diskSize'
+                        options = { diskSizes }
+                        value = { this.state.shardedCluster.router.diskSize }
+                        onChange = { this.handleShardedCluster } />
+                </Grid.Column>
+            </Grid.Row>
+        ));
+
+        // Sharded Clustered Tabs
+        const configServers = (
+            <Grid celled verticalAlign = 'middle' stackable doubling >
+                <Grid.Row columns = 'equal' key = 'shardedCluster-config-header' >
+                    <Grid.Column> <b> Config Servers </b> </Grid.Column>
+                    <Grid.Column> <b> Region </b> </Grid.Column>
+                    <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                    <Grid.Column> <b> Disk Size </b> </Grid.Column>
+                </Grid.Row>
+                { shardedClusterConfigTable }
+                <Grid.Row>
+                    <Grid.Column>
+                        <Button fluid basic
+                            icon = 'plus'
+                            color = 'yellow'
+                            type = 'config'
+                            onClick = { this.addShardedReplica }
+                        />
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+        );
+
+        const shardsServers = (
+            <div>
+                { shardedClusterReplicasTables }
+                <Button fluid color = 'green' onClick = { this.addShard }>
+                    Add Shard
+                </Button>
+            </div>
+        );
+
+        const routerServers = (
+            <Grid celled verticalAlign = 'middle' stackable doubling >
+                <Grid.Row columns = 'equal' key = 'shardedCluster-router-header' >
+                    <Grid.Column> <b> Router </b> </Grid.Column>
+                    <Grid.Column> <b> Region </b> </Grid.Column>
+                    <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                    <Grid.Column> <b> Disk Size </b> </Grid.Column>
+                </Grid.Row>
+                { shardedClusterRouterTable }
+            </Grid>
+        );
+
+        const tabs = [{
+            menuItem: 'Config Servers',
+            render: () => configServers
+        },
+        {
+            menuItem: 'Shards',
+            render: () => shardsServers
+        },
+        {
+            menuItem: 'Router',
+            render: () => routerServers
+        }];
 
         return (
           <div className = "CreateServer">
@@ -693,28 +881,7 @@ class CreateServer extends Component {
                                   <div>
                                       <Divider hidden />
                                       <Header dividing> Sharded Cluster </Header>
-                                      <Grid celled verticalAlign = 'middle' stackable doubling >
-                                          <Grid.Row columns = 'equal' key = 'shardedCluster-config-header' >
-                                              <Grid.Column> <b> Config Servers </b> </Grid.Column>
-                                              <Grid.Column> <b> Region </b> </Grid.Column>
-                                              <Grid.Column> <b> Machine Type </b> </Grid.Column>
-                                              <Grid.Column> <b> Disk Size </b> </Grid.Column>
-                                          </Grid.Row>
-                                          { shardedClusterConfigTable }
-                                          <Grid.Row>
-                                              <Grid.Column>
-                                                  <Button fluid basic
-                                                      icon = 'plus'
-                                                      color = 'yellow'
-                                                      type = 'config'
-                                                      onClick = { this.addShardedReplica }
-                                                  />
-                                              </Grid.Column>
-                                          </Grid.Row>
-                                      </Grid>
-
-                                      <Divider hidden />
-                                      { shardedClusterReplicasTables }
+                                      <Tab panes = { tabs } />
                                   </div>
                               }
 
