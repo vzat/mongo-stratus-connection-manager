@@ -709,15 +709,17 @@ class CreateServer extends Component {
         );
 
         const routerServers = (
-            <Grid celled verticalAlign = 'middle' stackable doubling >
-                <Grid.Row columns = 'equal' key = 'shardedCluster-router-header' >
-                    <Grid.Column> <b> Router </b> </Grid.Column>
-                    <Grid.Column> <b> Region </b> </Grid.Column>
-                    <Grid.Column> <b> Machine Type </b> </Grid.Column>
-                    <Grid.Column> <b> Disk Size </b> </Grid.Column>
-                </Grid.Row>
-                { shardedClusterRouterTable }
-            </Grid>
+            <div>
+                <Grid celled verticalAlign = 'middle' stackable doubling >
+                    <Grid.Row columns = 'equal' key = 'shardedCluster-router-header' >
+                        <Grid.Column> <b> Router </b> </Grid.Column>
+                        <Grid.Column> <b> Region </b> </Grid.Column>
+                        <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                        <Grid.Column> <b> Disk Size </b> </Grid.Column>
+                    </Grid.Row>
+                    { shardedClusterRouterTable }
+                </Grid>
+            </div>
         );
 
         const tabs = [{
@@ -881,7 +883,7 @@ class CreateServer extends Component {
                                   <div>
                                       <Divider hidden />
                                       <Header dividing> Sharded Cluster </Header>
-                                      <Tab panes = { tabs } />
+                                      <Tab menu = {{ secondary: true, pointing: true }} panes = { tabs } />
                                   </div>
                               }
 
