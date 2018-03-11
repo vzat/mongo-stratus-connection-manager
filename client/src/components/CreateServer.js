@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 
 import './css/CreateServer.css';
 
-import { Modal, Grid, Input, Image, Menu, Header, Dropdown, Divider, Button, Tab } from 'semantic-ui-react';
+import { Modal, Grid, Input, Image, Menu, Header, Dropdown, Divider, Button, Tab, Dimmer, Loader } from 'semantic-ui-react';
+
+import db from './utils/db.js';
 
 import gcp from './resources/images/gcp.svg';
 import azure from './resources/images/azure.svg';
@@ -112,7 +114,8 @@ class CreateServer extends Component {
                 }]
             }
         },
-        disableCreate: true
+        disableCreate: true,
+        loading: false
     };
 
     handleChange = (event) => {
@@ -322,6 +325,95 @@ class CreateServer extends Component {
         shardedCluster.replicas.splice(comp.id, 1);
 
         this.setState({ shardedCluster: shardedCluster });
+    };
+
+    createDB = async () => {
+        this.setState({ loading: true });
+        this.props.setDB(this.state.serverName);
+
+        switch(this.state.serverType) {
+            case 'singleNode':
+                return this.createSingleNode();
+            case 'replicaSet':
+                return this.createReplicaSet();
+            default:
+                this.setState({ loading: false });
+                break;
+        }
+    }
+
+    createSingleNode = async () => {
+        const singleNode = this.state.singleNode;
+        const server = this.state.singleNode.servers[0];
+        const data = {
+            username: this.props.username,
+            serverInfo: {
+                cloudPlatform: this.state.platform,
+                region: server.region,
+                machineType: server.machineType,
+                diskSize: singleNode.diskSize
+            },
+            serverData: {
+                serverName: this.state.serverName,
+                serverPort: 27017,
+                rootUser: this.state.rootUser,
+                rootPass: this.state.rootPass,
+                mongoVersion: this.state.mongoVersion
+            }
+        };
+        const json = await JSON.stringify(data);
+        const res = await db.createSingleNode(json);
+
+        if (res.ok && res.ok === 1) {
+            this.props.setCreatingDB(true);
+            this.props.setModalState(false);
+            this.setState({ loading: false });
+        }
+    };
+
+    createReplicaSet = async () => {
+        const replicaSet = this.state.replicaSet;
+        const servers = replicaSet.servers;
+
+        let regions = [];
+        let machineTypes = [];
+        let ports = [];
+        for (const serverNo in servers) {
+            const server = servers[serverNo];
+            regions.push(server.region);
+            machineTypes.push(server.machineType);
+            ports.push(27017);
+        }
+
+        const data = {
+            username: this.props.username,
+            serverInfo: {
+                cloudPlatform: this.state.platform,
+                regions: regions,
+                machineTypes: machineTypes,
+                diskSize: replicaSet.diskSize
+            },
+            serverData: {
+                serverName: this.state.serverName,
+                serverPorts: ports,
+                rootUser: this.state.rootUser,
+                rootPass: this.state.rootPass,
+                mongoVersion: this.state.mongoVersion,
+                replicaSetName: this.state.serverName
+            }
+        };
+        console.log(data);
+        const json = await JSON.stringify(data);
+        const res = await db.createReplicaSet(json);
+
+        if (res.ok && res.ok === 1) {
+            this.props.setCreatingDB(true);
+            this.props.setModalState(false);
+            this.setState({ loading: false });
+        }
+        else {
+            this.setState({ loading: false });
+        }
     };
 
     render() {
@@ -752,6 +844,9 @@ class CreateServer extends Component {
 
 
                       <Modal.Content>
+                          <Dimmer active = { this.state.loading } >
+                              <Loader content = 'Loading' />
+                          </Dimmer>
 
                           <Grid>
                               <Grid.Row>
@@ -921,7 +1016,12 @@ class CreateServer extends Component {
 
 
                       <Modal.Actions>
-                          <Button color = 'green' disabled = { this.state.disableCreate } > Create Instance </Button>
+                          <Button
+                              color = 'green'
+                              disabled = { this.state.disableCreate }
+                              onClick = {this.createDB} >
+                                  Create Instance
+                          </Button>
                       </Modal.Actions>
               </Modal>
           </div>

@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('cookie-session');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -12,6 +13,11 @@ module.exports = new Promise((resolve, reject) => {
     app.set('port', process.env.PORT || 4000);
     app.use(cors());
     app.use(bodyParser.json());
+    app.use(session({
+        name: 'session',
+        secret: 'MongoStratus',
+        maxAge: 60000
+    }));
     app.use(morgan('combined'));
 
     // Debug only

@@ -2,8 +2,83 @@ const express = require('express');
 
 const logger = require('../../lib/logger');
 const gcp = require('../../lib/cloud-platforms/gcp');
+const db = require('../../lib/db');
 
 const routes = express.Router();
+
+routes.post('/valid/session', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        if (req.session.username && req.session.username !== '') {
+            res.end(JSON.stringify({'ok': 1}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0, error: 'session'}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'error': err}));
+    }
+});
+
+routes.get('/get/username', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    if (req.session.username && req.session.username !== '') {
+        res.end(JSON.stringify({'ok': 1, 'username': req.session.username}));
+    }
+    else {
+        res.end(JSON.stringify({'ok': 0}));
+    }
+});
+
+routes.get('/exists/:username/:database', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const database = req.params.database;
+
+        const status = await db.checkDBExists(username, database);
+
+        if (status) {
+            res.end(JSON.stringify({'ok': 1}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'error': err}));
+    }
+});
+
+routes.get('/:username/instances', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+
+        const dbs = await db.getInstances(username);
+
+        if (dbs) {
+            res.end(JSON.stringify({
+                'ok': 1,
+                'data': dbs
+            }));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'error': err}));
+    }
+});
 
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');

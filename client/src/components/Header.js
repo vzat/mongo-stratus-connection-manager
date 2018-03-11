@@ -8,9 +8,7 @@ import logo from './resources/images/MongoStratusLogo.svg';
 
 class ServerList extends Component {
   state = {
-      username: 'jsmith',
-      notification: false,
-      notificationText: 'Your server is being created...'
+      notificationText: 'Your instance is being created...'
   };
 
   handleNotification = (visible, text) => {
@@ -20,9 +18,38 @@ class ServerList extends Component {
       });
   };
 
+  componentDidMount = () => {
+      this.checkDB();
+  };
+
+  checkDB = async () => {
+      if (this.props.notification) {
+          const username = this.props.username;
+          const database = this.props.db;
+
+          console.log(username, database);
+
+          const res = await fetch('/api/v1/internal/exists/' + username + '/' + database, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          const json = await res.json();
+
+          if (json.ok && json.ok === 1) {
+              this.props.setCreatingDB(false);
+          }
+      }
+
+      setTimeout(this.checkDB, 10000);
+  };
+
   render() {
-      const username = this.state.username;
-      const { notification, notificationText } = this.state;
+      const username = this.props.username;
+      const { notificationText } = this.state;
+      const { notification } = this.props;
 
       return (
         <div className = "Header">
