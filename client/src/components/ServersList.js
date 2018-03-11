@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/ServerList.css';
 
-import { Card, Image, Divider, Button } from 'semantic-ui-react';
+import { Card, Divider, Button, Grid } from 'semantic-ui-react';
 
 import db from './utils/db.js';
 
@@ -74,10 +74,20 @@ class ServerList extends Component {
 
         return (
           <div className = "ServerList">
-              <Button color = "green" onClick = {() => this.props.setModalState(true) }> New Server </Button>
+              <Button color = "green" onClick = {() => this.props.setModalState(true) }> New Instance </Button>
               <Divider hidden />
 
-              <Card.Group doubling stackable items = {items} />
+              {
+                  items.length === 0
+                  ?
+                  <Grid centered verticalAlign = 'middle'>
+                      <Grid.Column>
+                          <h1 className = 'no-instances'> No Instances </h1>
+                      </Grid.Column>
+                  </Grid>
+                  :
+                  <Card.Group doubling stackable items = {items} />
+              }
           </div>
         );
     }

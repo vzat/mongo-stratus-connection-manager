@@ -840,7 +840,7 @@ class CreateServer extends Component {
                       marginTop: 0,
                       maxWidth: 800
                   }} >
-                      <Modal.Header> Create New Server </Modal.Header>
+                      <Modal.Header> Create New Instance </Modal.Header>
 
 
                       <Modal.Content>

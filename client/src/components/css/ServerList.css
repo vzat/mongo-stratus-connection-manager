@@ -5,3 +5,14 @@
 .card {
     border-style: dashed;
 }
+
+.no-instances {
+    text-align: center;
+    color: gray;
+    padding-bottom: 300px;
+}
+
+.grid {
+    text-align: center;
+    height: 100vh;
+}
