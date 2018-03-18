@@ -38,6 +38,10 @@ class DatabaseList extends Component {
         ]
     };
 
+    componentWillMount = async () => {
+        
+    };
+
     render() {
         const databases = this.state.databases;
         const items = databases.map((database, index) => (

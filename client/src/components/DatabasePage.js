@@ -17,15 +17,15 @@ class DatabasePage extends Component {
                   db = {this.props.db}
                   setCreatingDB = {this.props.setCreatingDB}
               />
-              <Grid>
-                  <Grid.Row>
-                      <Grid.Column width = '12'>
+              <Grid stackable>
+                  <Grid.Row reversed = 'computer tablet'>
+                      <Grid.Column width = '5'>
+                          <InstanceStatus />
+                      </Grid.Column>
+                      <Grid.Column width = '11'>
                           <DatabaseList
                               instance = {this.props.match.params.database}
                           />
-                      </Grid.Column>
-                      <Grid.Column width = '4'>
-                          <InstanceStatus />
                       </Grid.Column>
                   </Grid.Row>
               </Grid>

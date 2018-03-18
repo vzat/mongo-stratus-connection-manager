@@ -80,6 +80,31 @@ routes.get('/:username/instances', async (req, res) => {
     }
 });
 
+routes.get('/:username/:instance/databases', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+
+        const dbs = await db.getDatabases(username, instance);
+
+        if (dbs) {
+            res.end(JSON.stringify({
+                'ok': 1,
+                'data': dbs
+            }));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'error': err}));
+    }
+});
+
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
