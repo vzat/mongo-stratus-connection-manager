@@ -20,7 +20,10 @@ class DatabasePage extends Component {
               <Grid stackable>
                   <Grid.Row reversed = 'computer tablet'>
                       <Grid.Column width = '5'>
-                          <InstanceStatus />
+                          <InstanceStatus
+                              username = {this.props.username}
+                              instance = {this.props.match.params.database}
+                          />
                       </Grid.Column>
                       <Grid.Column width = '11'>
                           <DatabaseList

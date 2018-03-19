@@ -4,9 +4,15 @@ import './css/InstanceStatus.css';
 
 import { List, Segment, Sticky, Header, Button, Icon, Responsive, Container } from 'semantic-ui-react';
 
+import db from './utils/db';
+
 class InstanceStatus extends Component {
-    deleteInstance = () => {
-        
+    deleteInstance = async () => {
+        const res = await db.deleteInstance(this.props.username, this.props.instance);
+
+        if (res.ok && res.ok === 1) {
+            window.location = '/';
+        }
     };
 
     render() {
@@ -27,7 +33,7 @@ class InstanceStatus extends Component {
                         </List.Content>
                     </List.Item>
                 </List>
-                <Button icon fluid color = 'red' labelPosition = 'left'>
+                <Button icon fluid color = 'red' labelPosition = 'left' onClick = { this.deleteInstance }>
                     <Icon name = 'trash' />
                     Delete Instance
                 </Button>

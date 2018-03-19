@@ -141,17 +141,14 @@ routes.get('/:username/:instance/databases', async (req, res) => {
     }
 });
 
-routes.delete('/:username/:instance/delete', async (req, res) => {
+routes.delete('/:username/:instance', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     try {
         const username = req.params.username;
         const instance = req.params.instance;
 
-        // const success = await db.deleteInstance(username, instance);
-        // TODO: Create function that finds zone from ip or store zone in db
-        // Delete all instances
-
+        const success = await db.removeInstanceFromUser(username, instance);
 
         if (success) {
             res.end(JSON.stringify({'ok': 1}));

@@ -46,7 +46,7 @@ const db = {
         return await res.json();
     },
     deleteInstance: async (username, instance) => {
-        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/delete', {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance, {
             method: 'DELETE',
             credentials: 'include',
             headers: {
