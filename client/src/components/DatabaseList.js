@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/DatabaseList.css';
 
-import { List, Button } from 'semantic-ui-react';
+import { List, Button, Icon } from 'semantic-ui-react';
 
 class DatabaseList extends Component {
     state = {
@@ -39,7 +39,7 @@ class DatabaseList extends Component {
     };
 
     componentWillMount = async () => {
-        
+
     };
 
     render() {
@@ -47,8 +47,9 @@ class DatabaseList extends Component {
         const items = databases.map((database, index) => (
             <List.Item>
                 <List.Content floated = 'right'>
-                    <Button> Edit Schema </Button>
                     <Button circular icon = 'eye' />
+                    <Button> Edit Schema </Button>
+                    <Button icon = 'remove' color = 'red' basic compact/>
                 </List.Content>
 
                 <List.Icon name = 'database' size = 'large' vericalAlign = 'middle' />
@@ -62,6 +63,11 @@ class DatabaseList extends Component {
           <div className = "DatabaseList">
               <List divided relaxed size = 'large'>
                   { items }
+                  <List.Item>
+                      <List.Content>
+                          <Button fluid basic color = 'green' icon = 'plus' />
+                      </List.Content>
+                  </List.Item>
               </List>
           </div>
         );

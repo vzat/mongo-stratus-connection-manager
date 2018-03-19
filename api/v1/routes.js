@@ -141,6 +141,31 @@ routes.get('/:username/:instance/databases', async (req, res) => {
     }
 });
 
+routes.delete('/:username/:instance/delete', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+
+        // const success = await db.deleteInstance(username, instance);
+        // TODO: Create function that finds zone from ip or store zone in db
+        // Delete all instances
+
+
+        if (success) {
+            res.end(JSON.stringify({'ok': 1}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
