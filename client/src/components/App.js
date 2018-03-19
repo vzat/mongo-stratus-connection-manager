@@ -17,24 +17,26 @@ class App extends Component {
         db: ''
     };
 
-    componentWillMount = async () => {
-        // const res = await fetch('/api/v1/internal/get/username', {
-        //     method: 'GET',
-        //     credentials: 'include',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // });
-        //
-        // const json = await res.json();
-        //
-        // if (!json.ok || json.ok === 0) {
-        //     window.location = 'http://localhost:3001/login';
-        // }
-        //
-        // this.setState({username: json.username});
+    componentDidMount = async () => {
+        document.title = 'MongoStratus';
 
-        this.setState({username: 'jsmith'});
+        const res = await fetch('/api/v1/internal/get/username', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const json = await res.json();
+
+        if (!json.ok || json.ok === 0) {
+            window.location = 'http://localhost:3001/login';
+        }
+
+        this.setState({username: json.username});
+
+        // this.setState({username: 'jsmith'});
     };
 
     setModalState = (value) => {
@@ -50,8 +52,6 @@ class App extends Component {
     };
 
     render() {
-        // const openModal = this.state.openModal;
-
         return (
             <Router>
                 <div className="App">

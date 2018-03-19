@@ -12,5 +12,5 @@ server.then( () => {
     if (process.env.NODE_ENV !== 'production') {
         spawn('npm', ['start'], {cwd: 'client'});
     }
-    logger.log('info', 'Login Manager Client running on port 4001');
+    logger.log('info', 'Connection Manager Client running on port 4001');
 });

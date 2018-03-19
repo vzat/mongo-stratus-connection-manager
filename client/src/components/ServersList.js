@@ -12,12 +12,13 @@ import aws from './resources/images/aws.svg';
 
 class ServerList extends Component {
     state = {
-        items: []
+        items: [],
+        username: ''
     }
 
-    componentWillMount = async () => {
+    getInstances = async (username) => {
         // Get Instances
-        const res = await db.getInstances(this.props.username);
+        const res = await db.getInstances(username);
 
         if (res && res.ok && res.ok === 1) {
             const instances = res.data;
@@ -67,6 +68,16 @@ class ServerList extends Component {
             }
             this.setState({ items: items });
         }
+    }
+
+    componentWillReceiveProps = async (nextProps) => {
+        if (nextProps.username != this.props.username) {
+            await this.getInstances(nextProps.username);
+        }
+    };
+
+    componentDidMount = async () => {
+        await this.getInstances(this.props.username);
     }
 
     render() {
