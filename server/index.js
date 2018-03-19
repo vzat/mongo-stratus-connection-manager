@@ -15,8 +15,8 @@ module.exports = new Promise((resolve, reject) => {
     app.use(bodyParser.json());
     app.use(session({
         name: 'session',
-        secret: 'MongoStratus',
-        maxAge: 60000
+        secret: 'MongoStratus'
+        // maxAge: 60000
     }));
     app.use(morgan('combined'));
 

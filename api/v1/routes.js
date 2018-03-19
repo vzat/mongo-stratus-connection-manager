@@ -34,6 +34,42 @@ routes.get('/get/username', (req, res) => {
     }
 });
 
+routes.get('/show/notification', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        if (req.session.creatingInstance !== undefined && req.session.creatingInstance === true) {
+            // An instance is being created
+            const username = req.session.username;
+            const instance = req.session.instanceName;
+            const status = await db.checkDBExists(username, instance);
+
+            if (status) {
+                req.session.creatingInstance = false;
+                res.end(JSON.stringify({'ok': 1, 'notification': 0, 'refresh': 1}));
+            }
+            else {
+                res.end(JSON.stringify({'ok': 1, 'notification': 1}));
+            }
+        }
+        else {
+            res.end(JSON.stringify({'ok': 1, 'notification': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
+routes.post('/hide/notification', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    req.session.creatingInstance = false;
+
+    res.end(JSON.stringify({'ok': 1}));
+});
+
 routes.get('/exists/:username/:database', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
@@ -143,6 +179,10 @@ routes.post('/create/singlenode/db', async (req, res) => {
             !serverData.mongoVersion)
             throw new Error('Invalid Server Data');
 
+        // Store instance in cookies
+        req.session.creatingInstance = true;
+        req.session.instanceName = serverData.serverName;
+
         if (serverInfo.cloudPlatform === 'gcp') {
             gcp.createSingleNodeDB(username, serverInfo.region, serverInfo.machineType, Number(serverInfo.diskSize), serverData);
             res.end(JSON.stringify({'ok': 1}));
@@ -152,6 +192,7 @@ routes.post('/create/singlenode/db', async (req, res) => {
         }
     }
     catch (err) {
+        req.session.creatingInstance = false;
         logger.log('error', err);
         res.end(JSON.stringify({'ok': 0, 'error': err}));
     }

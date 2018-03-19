@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/Header.css';
 
-import { Segment, Image, Dropdown, Loader, Transition } from 'semantic-ui-react';
+import { Segment, Image, Dropdown, Loader, Transition, Button } from 'semantic-ui-react';
 
 import logo from './resources/images/MongoStratusLogo.svg';
 
@@ -23,27 +23,56 @@ class ServerList extends Component {
   };
 
   checkDB = async () => {
-      if (this.props.notification) {
-          const username = this.props.username;
-          const database = this.props.db;
+      // if (this.props.notification) {
+      //     const username = this.props.username;
+      //     const database = this.props.db;
+      //
+      //     const res = await fetch('/api/v1/internal/exists/' + username + '/' + database, {
+      //         method: 'GET',
+      //         headers: {
+      //             'Content-Type': 'application/json'
+      //         }
+      //     });
+      //
+      //     const json = await res.json();
+      //
+      //     if (json.ok && json.ok === 1) {
+      //         this.props.setCreatingDB(false);
+      //     }
+      // }
 
-          console.log(username, database);
+      const res = await fetch('/api/v1/internal/show/notification', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
 
-          const res = await fetch('/api/v1/internal/exists/' + username + '/' + database, {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json'
-              }
-          });
+      const json = await res.json();
 
-          const json = await res.json();
+      if (json.ok && json.ok === 1 && json.notification && json.notification === 1) {
+          this.props.setCreatingDB(true);
+      }
+      else {
+          this.props.setCreatingDB(false);
 
-          if (json.ok && json.ok === 1) {
-              this.props.setCreatingDB(false);
+          if (json.refresh && json.refresh === 1 && this.props.setRefreshServerList !== undefined) {
+              this.props.setRefreshServerList(true);
           }
       }
 
       setTimeout(this.checkDB, 10000);
+  };
+
+  hideNotification = async () => {
+      const res = await fetch('/api/v1/internal/hide/notification', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
   };
 
   render() {
@@ -77,6 +106,7 @@ class ServerList extends Component {
                         <div className = 'notification-text'>
                             { notificationText }
                         </div>
+                        <Button compact floated = 'right' icon = 'close' size = 'tiny' color = 'green' onClick = { this.hideNotification } />
                     </Segment>
                 }
             </Transition.Group>

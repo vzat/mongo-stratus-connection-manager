@@ -14,7 +14,8 @@ class App extends Component {
     state = {
         openModal: false,
         creatingDB: false,
-        db: ''
+        db: '',
+        refreshServerList: false
     };
 
     componentDidMount = async () => {
@@ -47,6 +48,10 @@ class App extends Component {
         this.setState({creatingDB: value});
     };
 
+    setRefreshServerList = (value) => {
+        this.setState({refreshServerList: value});
+    };
+
     setDB = (value) => {
         this.setState({db: value});
     };
@@ -68,6 +73,8 @@ class App extends Component {
                                     setModalState = {this.setModalState}
                                     openModal = {this.state.openModal}
                                     setDB = {this.setDB}
+                                    setRefreshServerList = {this.setRefreshServerList}
+                                    refreshServerList = {this.state.refreshServerList}
                                 />
                             }
                         />
@@ -79,7 +86,7 @@ class App extends Component {
                                     username = {this.state.username}
                                     creatingDB = {this.state.creatingDB}
                                     db = {this.state.db}
-                                    setCreatingDB = {this.creatingDB}
+                                    setCreatingDB = {this.setCreatingDB}
                                 />
                             }
                         />

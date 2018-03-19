@@ -14,10 +14,13 @@ class MainPage extends Component {
                     notification = {this.props.creatingDB}
                     db = {this.props.db}
                     setCreatingDB = {this.props.setCreatingDB}
+                    setRefreshServerList = {this.props.setRefreshServerList}
                 />
                 <ServerList
                     username = {this.props.username}
                     setModalState = {this.props.setModalState}
+                    setRefreshServerList = {this.props.setRefreshServerList}
+                    refreshServerList = {this.props.refreshServerList}
                 />
                 <CreateServer
                     username = {this.props.username}
