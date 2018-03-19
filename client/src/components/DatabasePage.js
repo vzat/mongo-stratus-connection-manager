@@ -27,6 +27,7 @@ class DatabasePage extends Component {
                       </Grid.Column>
                       <Grid.Column width = '11'>
                           <DatabaseList
+                              username = {this.props.username}
                               instance = {this.props.match.params.database}
                           />
                       </Grid.Column>

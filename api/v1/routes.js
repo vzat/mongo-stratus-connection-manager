@@ -122,8 +122,9 @@ routes.get('/:username/:instance/databases', async (req, res) => {
     try {
         const username = req.params.username;
         const instance = req.params.instance;
+        const token = req.session.token;
 
-        const dbs = await db.getDatabases(username, instance);
+        const dbs = await db.getDatabases(username, instance, token);
 
         if (dbs) {
             res.end(JSON.stringify({

@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 
 import './css/InstanceStatus.css';
 
-import { List, Segment, Sticky, Header, Button, Icon, Responsive, Container } from 'semantic-ui-react';
+import { List, Segment, Sticky, Header, Button, Icon, Responsive, Container, Confirm } from 'semantic-ui-react';
 
 import db from './utils/db';
 
 class InstanceStatus extends Component {
+    state = {
+        deleteInstanceConfirm: false
+    }
+
     deleteInstance = async () => {
         const res = await db.deleteInstance(this.props.username, this.props.instance);
 
@@ -14,6 +18,14 @@ class InstanceStatus extends Component {
             window.location = '/';
         }
     };
+
+    showDeleteInstanceConfirm = () => {
+        this.setState({deleteInstanceConfirm: true});
+    }
+
+    hideDeleteInstanceConfirm = () => {
+        this.setState({deleteInstanceConfirm: false});
+    }
 
     render() {
         const segment = (
@@ -33,10 +45,23 @@ class InstanceStatus extends Component {
                         </List.Content>
                     </List.Item>
                 </List>
-                <Button icon fluid color = 'red' labelPosition = 'left' onClick = { this.deleteInstance }>
+                <Button icon fluid color = 'red' labelPosition = 'left' onClick = { this.showDeleteInstanceConfirm }>
                     <Icon name = 'trash' />
                     Delete Instance
                 </Button>
+                <Confirm
+                    open = {this.state.deleteInstanceConfirm}
+                    onCancel = {this.hideDeleteInstanceConfirm}
+                    onConfirm = {this.deleteInstance}
+                    header = 'Are you sure you want to delete this instance?'
+                    content = 'You cannot undo this action. All data will be permanently deleted.'
+                    confirmButton = 'Delete Instance'
+                    size = 'fullscreen'
+                    style = {{
+                        marginTop: 0,
+                        maxWidth: 800
+                    }}
+                />
             </Segment>
         );
 
