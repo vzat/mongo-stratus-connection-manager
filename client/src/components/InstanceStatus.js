@@ -8,8 +8,42 @@ import db from './utils/db';
 
 class InstanceStatus extends Component {
     state = {
-        deleteInstanceConfirm: false
+        deleteInstanceConfirm: false,
+        instanceType: 'singleNode',
+        instancePlatform: 'gcp',
+        servers: {
+            node: {
+                ip: '123.123.123',
+                region: 'us1',
+                machineType: 'micro',
+                status: 'green'
+            }
+        }
     }
+
+    // Replica Set
+    // servers: {
+    //     primary: [{
+    //
+    //     }],
+    //     secondary: [{
+    //
+    //     }]
+    // }
+
+    // Sharded Cluster
+    // servers: {
+    //     config: [{
+    //         primary: [{
+    //
+    //         }]
+    //     }],
+    //     shards: [{
+    //         shard1: [{
+    //             primary
+    //         }]
+    //     }]
+    // }
 
     deleteInstance = async () => {
         const res = await db.deleteInstance(this.props.username, this.props.instance);
@@ -28,6 +62,22 @@ class InstanceStatus extends Component {
     }
 
     render() {
+        const { instanceType } = this.state;
+
+        // const items = (
+        //     <div>
+        //         { instanceType === 'singleNode' &&
+        //             <List.Item>
+        //                 <List.Icon name = 'server' color = 'green' />
+        //                 <List.Content>
+        //                     48.165.147.789
+        //                 </List.Content>
+        //             </List.Item>
+        //         }
+        //     </div>
+        // );
+
+        // Maybe use accordion
         const segment = (
             <Segment color = 'blue'>
                 <Header as = 'h4'> Servers </Header>
@@ -54,7 +104,7 @@ class InstanceStatus extends Component {
                     onCancel = {this.hideDeleteInstanceConfirm}
                     onConfirm = {this.deleteInstance}
                     header = 'Are you sure you want to delete this instance?'
-                    content = 'You cannot undo this action. All data will be permanently deleted.'
+                    content = 'All data will be permanently deleted. You cannot undo this action.'
                     confirmButton = 'Delete Instance'
                     size = 'fullscreen'
                     style = {{
