@@ -8,6 +8,7 @@ import './css/App.css';
 // import ServerList from './ServersList';
 // import CreateServer from './CreateServer';
 import MainPage from './MainPage';
+import InstancePage from './InstancePage';
 import DatabasePage from './DatabasePage';
 
 class App extends Component {
@@ -81,7 +82,7 @@ class App extends Component {
                         <Route
                             path = '/instance/:database'
                             render = {props =>
-                                <DatabasePage
+                                <InstancePage
                                     {...props}
                                     username = {this.state.username}
                                     creatingDB = {this.state.creatingDB}
