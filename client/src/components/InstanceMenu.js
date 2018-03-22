@@ -14,15 +14,7 @@ class InstanceMenu extends Component {
 
     handleMenuClick = (event, component) => {
         this.setState({menuActive: component.name});
-    };
-
-    componentDidMount = () => {
-        // Get Info from DB
-        console.log(this.props.instanceInfo);
-    };
-
-    componentWillReceiveProps = (nextProps) => {
-        // console.log(nextProps);
+        this.props.setCurrentPage(component.name);
     };
 
     render() {

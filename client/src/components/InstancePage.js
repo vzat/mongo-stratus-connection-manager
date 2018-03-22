@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 
+import './css/InstancePage.css';
+
 import Header from './Header';
 import InstanceMenu from './InstanceMenu';
+import InstanceOverview from './InstanceOverview';
 
 import db from './utils/db';
+
+import { Grid } from 'semantic-ui-react';
 
 class InstancePage extends Component {
     state = {
@@ -15,7 +20,8 @@ class InstancePage extends Component {
             type: '',
             version: '',
             dbs: []
-        }
+        },
+        currentPage: 'overview'
     };
 
     getInstanceData = async (username, instanceName) => {
@@ -28,7 +34,7 @@ class InstancePage extends Component {
             instanceInfo.ips = instanceData.ip;
             instanceInfo.ports = instanceData.port;
             instanceInfo.instanceName = instanceData.serverName;
-            
+
             switch (instanceData.platform) {
                 case 'gcp':
                     instanceInfo.platform = 'Google Cloud Platform';
@@ -90,6 +96,10 @@ class InstancePage extends Component {
         }
     };
 
+    setCurrentPage = (page) => {
+        this.setState({currentPage: page});
+    }
+
     render() {
         return (
           <div className="InstancePage">
@@ -100,9 +110,22 @@ class InstancePage extends Component {
                     setCreatingDB = {this.props.setCreatingDB}
                     setRefreshServerList = {this.props.setRefreshServerList}
                 />
-                <InstanceMenu
-                    instanceInfo = {this.state.instanceInfo}
-                />
+                <Grid stackable divided className = 'instance-grid'>
+                    <Grid.Row className = 'instance-row'>
+                        <Grid.Column className = 'menu-column'>
+                            <InstanceMenu
+                                instanceInfo = {this.state.instanceInfo}
+                                setCurrentPage = {this.setCurrentPage}
+                            />
+                        </Grid.Column>
+
+                        <Grid.Column>
+                            {
+                                this.state.currentPage === 'overview' && <InstanceOverview />
+                            }
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
           </div>
         );
     }
