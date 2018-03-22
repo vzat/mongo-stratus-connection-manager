@@ -93,7 +93,7 @@ class ServerList extends Component {
                   <Icon name = 'plus' />
                   Create Instance
               </Button>
-              
+
               <Divider hidden />
 
               {

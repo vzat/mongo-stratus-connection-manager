@@ -18,23 +18,30 @@ class InstanceMenu extends Component {
 
     componentDidMount = () => {
         // Get Info from DB
+        console.log(this.props.instanceInfo);
+    };
+
+    componentWillReceiveProps = (nextProps) => {
+        // console.log(nextProps);
     };
 
     render() {
+        const { instanceInfo } = this.props;
+
         return (
           <div className="InstanceMenu">
                 <Menu vertical tabular color = 'green' size = 'small' className = 'navMenu'>
                     <Menu.Item>
-                        <Header as = 'h3' > { this.props.instance } </Header>
+                        <Header as = 'h3' > { instanceInfo.instanceName } </Header>
                         <List>
                             <List.Item>
-                                { this.state.instanceType }
+                                { instanceInfo.type }
                             </List.Item>
                             <List.Item>
-                                { this.state.instancePlatform }
+                                { instanceInfo.platform }
                             </List.Item>
                             <List.Item>
-                                Version: { this.state.instanceVersion }
+                                Version: { instanceInfo.version }
                             </List.Item>
                         </List>
                         <Divider fitted />

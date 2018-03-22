@@ -55,6 +55,17 @@ const db = {
         });
 
         return await res.json();
+    },
+    getInstanceData: async (username, instance) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/info', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
     }
 };
 
