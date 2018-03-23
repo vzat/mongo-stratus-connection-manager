@@ -1,17 +1,13 @@
 .InstancePage {
-    height: 100vh;
+    height: 100%;
 }
 
 /* https://stackoverflow.com/questions/39926080/fix-width-of-one-column-in-a-row-in-semantic-ui */
 /* Fix for the sui grid to support fixed column */
 .menu-column {
-    flex: 0 0 200px;
+    flex: 0 0 193px;
 }
 
 .instance-grid {
-    height: 100%;
+    min-height: 100vh;
 }
-
-/* .instance-row {
-    height: 100%;
-} */

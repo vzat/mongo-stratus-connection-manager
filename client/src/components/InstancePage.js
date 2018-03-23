@@ -8,7 +8,7 @@ import InstanceOverview from './InstanceOverview';
 
 import db from './utils/db';
 
-import { Grid } from 'semantic-ui-react';
+import { Grid, Segment } from 'semantic-ui-react';
 
 class InstancePage extends Component {
     state = {
@@ -111,7 +111,7 @@ class InstancePage extends Component {
                     setRefreshServerList = {this.props.setRefreshServerList}
                 />
                 <Grid stackable divided className = 'instance-grid'>
-                    <Grid.Row className = 'instance-row'>
+                    <Grid.Row streched className = 'instance-row'>
                         <Grid.Column className = 'menu-column'>
                             <InstanceMenu
                                 instanceInfo = {this.state.instanceInfo}

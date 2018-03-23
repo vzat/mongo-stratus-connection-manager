@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 
 import './css/InstanceOverview.css';
 
-import {  } from 'semantic-ui-react';
+import { Divider } from 'semantic-ui-react';
 
 class InstanceOverview extends Component {
     render() {
         return (
           <div className="InstanceOverview">
-              Overview
+              Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider /> Overview <Divider />
           </div>
         );
     }

@@ -22,7 +22,7 @@ class InstanceMenu extends Component {
 
         return (
           <div className="InstanceMenu">
-                <Menu vertical tabular color = 'green' size = 'small' className = 'navMenu'>
+                <Menu vertical secondary color = 'green' size = 'small' className = 'nav-menu'>
                     <Menu.Item>
                         <Header as = 'h3' > { instanceInfo.instanceName } </Header>
                         <List>
