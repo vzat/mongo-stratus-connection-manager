@@ -1,3 +1,15 @@
-.InstanceOverview {
+/* .InstanceOverview {
     padding-top: 10px;
+} */
+
+.servers {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+    justify-content: space-around;
+}
+
+.server-table {
+    padding: 10px 0 10px 0;
+    /* margin: auto; */
 }

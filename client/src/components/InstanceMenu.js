@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/InstanceMenu.css';
 
-import { Menu, Divider, Header, List } from 'semantic-ui-react';
+import { Menu, Divider, Header, List, Statistic } from 'semantic-ui-react';
 
 class InstanceMenu extends Component {
     state = {
@@ -22,22 +22,7 @@ class InstanceMenu extends Component {
 
         return (
           <div className="InstanceMenu">
-                <Menu vertical secondary color = 'green' size = 'small' className = 'nav-menu'>
-                    <Menu.Item>
-                        <Header as = 'h3' > { instanceInfo.instanceName } </Header>
-                        <List>
-                            <List.Item>
-                                { instanceInfo.type }
-                            </List.Item>
-                            <List.Item>
-                                { instanceInfo.platform }
-                            </List.Item>
-                            <List.Item>
-                                Version: { instanceInfo.version }
-                            </List.Item>
-                        </List>
-                        <Divider fitted />
-                    </Menu.Item>
+                <Menu secondary pointing stackable color = 'green' className = 'nav-menu'>
                     <Menu.Item name = 'overview' active = {this.state.menuActive === 'overview'} onClick = {this.handleMenuClick}>
                         Overview
                     </Menu.Item>
@@ -57,3 +42,21 @@ class InstanceMenu extends Component {
 }
 
 export default InstanceMenu;
+
+// <Menu vertical secondary color = 'green' size = 'small' className = 'nav-menu'>
+
+// <Menu.Item>
+//     <Header as = 'h3' > { instanceInfo.instanceName } </Header>
+//     <List>
+//         <List.Item>
+//             { instanceInfo.type }
+//         </List.Item>
+//         <List.Item>
+//             { instanceInfo.platform }
+//         </List.Item>
+//         <List.Item>
+//             Version: { instanceInfo.version }
+//         </List.Item>
+//     </List>
+//     <Divider fitted />
+// </Menu.Item>

@@ -8,7 +8,7 @@ import InstanceOverview from './InstanceOverview';
 
 import db from './utils/db';
 
-import { Grid, Segment } from 'semantic-ui-react';
+import { Grid, Segment, Sidebar, Menu, List, Divider } from 'semantic-ui-react';
 
 class InstancePage extends Component {
     state = {
@@ -16,9 +16,9 @@ class InstancePage extends Component {
             instanceName: '',
             ips: [],
             ports: [],
-            platform: '',
-            type: '',
-            version: '',
+            platform: '__________',
+            type: '__________',
+            version: '3.x',
             dbs: []
         },
         currentPage: 'overview'
@@ -109,26 +109,58 @@ class InstancePage extends Component {
                     db = {this.props.db}
                     setCreatingDB = {this.props.setCreatingDB}
                     setRefreshServerList = {this.props.setRefreshServerList}
+                    instanceName = {this.state.instanceInfo.instanceName}
                 />
-                <Grid stackable divided className = 'instance-grid'>
-                    <Grid.Row streched className = 'instance-row'>
-                        <Grid.Column className = 'menu-column'>
-                            <InstanceMenu
-                                instanceInfo = {this.state.instanceInfo}
-                                setCurrentPage = {this.setCurrentPage}
-                            />
-                        </Grid.Column>
-
-                        <Grid.Column>
-                            {
-                                this.state.currentPage === 'overview' && <InstanceOverview />
-                            }
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
+                <InstanceMenu
+                    instanceInfo = {this.state.instanceInfo}
+                    setCurrentPage = {this.setCurrentPage}
+                />
+                {
+                    this.state.currentPage === 'overview' &&
+                    <InstanceOverview
+                        instanceInfo = {this.state.instanceInfo}
+                    />
+                }
           </div>
         );
     }
 }
 
 export default InstancePage;
+
+// <Grid stackable divided className = 'instance-grid'>
+//     <Grid.Row streched className = 'instance-row'>
+//         <Grid.Column className = 'menu-column'>
+//             <InstanceMenu
+//                 instanceInfo = {this.state.instanceInfo}
+//                 setCurrentPage = {this.setCurrentPage}
+//             />
+//         </Grid.Column>
+//
+//         <Grid.Column>
+//             {
+//                 this.state.currentPage === 'overview' && <InstanceOverview />
+//             }
+//         </Grid.Column>
+//     </Grid.Row>
+// </Grid>
+
+// <Sidebar.Pushable as = {Segment}>
+//     <Sidebar as = {Menu} animation = 'push' width = 'thin' visible = {true} vertical>
+//         <Menu.Item name = 'overview' active = { true } onClick = {this.handleMenuClick}>
+//             Overview
+//         </Menu.Item>
+//         <Menu.Item name = 'databases' active = { false } onClick = {this.handleMenuClick}>
+//             Databases
+//         </Menu.Item>
+//         <Menu.Item name = 'users' active = { false } onClick = {this.handleMenuClick}>
+//             Users
+//         </Menu.Item>
+//         <Menu.Item name = 'settings' active = { false } onClick = {this.handleMenuClick}>
+//             Settings
+//         </Menu.Item>
+//     </Sidebar>
+//     <Sidebar.Pusher>
+//         <InstanceOverview />
+//     </Sidebar.Pusher>
+// </Sidebar.Pushable>

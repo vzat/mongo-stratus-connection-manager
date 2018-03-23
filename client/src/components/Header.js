@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/Header.css';
 
-import { Segment, Image, Dropdown, Loader, Transition, Button } from 'semantic-ui-react';
+import { Segment, Image, Dropdown, Loader, Transition, Button, Breadcrumb } from 'semantic-ui-react';
 
 import logo from './resources/images/MongoStratusLogo.svg';
 
@@ -19,6 +19,7 @@ class ServerList extends Component {
   };
 
   componentDidMount = () => {
+      // Show notification if a db is being created
       this.checkDB();
   };
 
@@ -80,6 +81,36 @@ class ServerList extends Component {
       const { notificationText } = this.state;
       const { notification } = this.props;
 
+      const breadcrumb = (
+          <Breadcrumb className = 'breadcrumb-nav'>
+              <Breadcrumb.Section
+                  href = '/'
+                  active = { this.props.instanceName === undefined }>
+                      Home
+              </Breadcrumb.Section>
+
+              { this.props.instanceName &&
+                  <Breadcrumb.Divider icon = 'right chevron'/>
+              }
+              { this.props.instanceName &&
+                  <Breadcrumb.Section
+                      href = {'/instance/' + this.props.instanceName}
+                      active = { this.props.databaseName === undefined } >
+                          { this.props.instanceName }
+                  </Breadcrumb.Section>
+              }
+
+              { this.props.databaseName &&
+                  <Breadcrumb.Divider icon = 'right chevron' />
+              }
+              { this.props.databaseName &&
+                  <Breadcrumb.Section link active> { this.props.databaseName } </Breadcrumb.Section>
+              }
+          </Breadcrumb>
+      );
+
+      console.log(this.props.instanceName);
+
       return (
         <div className = "Header">
             <Segment attached = 'top'>
@@ -110,6 +141,7 @@ class ServerList extends Component {
                     </Segment>
                 }
             </Transition.Group>
+            { breadcrumb }
         </div>
       );
     }
