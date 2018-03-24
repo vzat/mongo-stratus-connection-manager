@@ -5,6 +5,7 @@ import './css/InstancePage.css';
 import Header from './Header';
 import InstanceMenu from './InstanceMenu';
 import InstanceOverview from './InstanceOverview';
+import Settings from './Settings';
 
 import db from './utils/db';
 
@@ -120,6 +121,13 @@ class InstancePage extends Component {
                     <InstanceOverview
                         username = {this.props.username}
                         instanceInfo = {this.state.instanceInfo}
+                    />
+                }
+                {
+                    this.state.currentPage === 'settings' &&
+                    <Settings
+                        username = {this.props.username}
+                        instance = {this.state.instanceInfo.instanceName}
                     />
                 }
           </div>
