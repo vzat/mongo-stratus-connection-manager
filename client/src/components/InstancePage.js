@@ -118,6 +118,7 @@ class InstancePage extends Component {
                 {
                     this.state.currentPage === 'overview' &&
                     <InstanceOverview
+                        username = {this.props.username}
                         instanceInfo = {this.state.instanceInfo}
                     />
                 }

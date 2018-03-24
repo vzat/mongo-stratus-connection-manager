@@ -141,6 +141,36 @@ routes.get('/:username/:instance/info', async (req, res) => {
     }
 });
 
+routes.get('/:username/:instance/servers/info', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+
+        const instanceData = await db.getInstanceData(username, instance);
+
+        let data;
+        if (instanceData[0].platform === 'gcp') {
+            data = await gcp.getVMsDetails(username, instance);
+        }
+
+        if (data) {
+            res.end(JSON.stringify({
+                'ok': 1,
+                'data': data
+            }));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.get('/:username/:instance/databases', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 

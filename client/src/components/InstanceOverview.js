@@ -10,8 +10,6 @@ class InstanceOverview extends Component {
     render() {
         const { instanceInfo } = this.props;
 
-
-
         return (
           <div className="InstanceOverview">
               <Grid columns = 'equal' stackable doubling centered padded>
@@ -43,7 +41,10 @@ class InstanceOverview extends Component {
 
             {
                 instanceInfo.type === 'Single Node' &&
-                <InstanceOverviewSingleNode />
+                <InstanceOverviewSingleNode
+                    username = {this.props.username}
+                    instanceInfo = {this.props.instanceInfo}
+                />
             }
 
           </div>

@@ -2,16 +2,90 @@ import React, { Component } from 'react';
 
 import { Table, Label, Icon, Flag, Popup } from 'semantic-ui-react';
 
+import db from './utils/db';
+
+import gcpRegions from './resources/gcpRegions.json';
+import gcpMachineTypes from './resources/gcpMachineTypes.json';
+
 class InstanceOverviewSingleNode extends Component {
     state = {
         running: true,
-        name: 'lee2-instance1.mongostratus.me:27017',
-        vcpu: '0.2',
-        ram: '0.60',
-        disk: '10',
-        region: 'N. Virginia',
+        name: '_________.mongostratus.me:27017',
+        vcpu: 'x',
+        ram: 'x',
+        disk: 'x',
+        region: '_____',
         flag: 'us',
-        ip: '78.106.68.1'
+        ip: 'x.x.x.x'
+    };
+
+    componentDidMount = async () => {
+        await this.fetchServerData();
+        // console.log('singlenode', this.props);
+    }
+
+    fetchServerData = async () => {
+        // Get machine type and convert to vcpu and ram
+        // Get disk size
+        // Get region and convert to city and flag
+        // Get ip from vm
+
+        const { username } = this.props;
+        const { instanceInfo } = this.props;
+        const res = await db.getServerDetails(username, instanceInfo.instanceName);
+
+        // res.data.machineType
+        // res.data.diskSize
+        // res.data.region
+        // res.data.ip
+        // res.data.running
+
+        if (res.ok && res.ok === 1) {
+              const data = res.data[0];
+
+              let regionValue;
+              let flagValue;
+              let vcpu;
+              let ram;
+
+              let regions;
+              let machineTypes;
+              if (instanceInfo.platform === 'Google Cloud Platform') {
+                  regions = gcpRegions;
+                  machineTypes = gcpMachineTypes;
+              }
+
+              // Get region name and flag
+              for (let regionNo = 0 ; regionNo < regions.length ; regionNo ++) {
+                  const region = regions[regionNo];
+                  if (region.value === data.region) {
+                      regionValue = region.text;
+                      flagValue = region.flag;
+                  }
+              }
+
+              // Get virtual cpu and memory
+              for (let machineTypeNo = 0 ; machineTypeNo < machineTypes.length ; machineTypeNo ++) {
+                  const machineType = machineTypes[machineTypeNo];
+                  if (machineType.name === data.machineType) {
+                      vcpu = machineType.vcpu;
+                      ram = machineType.ram;
+                  }
+              }
+
+              const newState = {
+                  running: data.running,
+                  name: username + '-' + instanceInfo.instanceName + '.mongostratus.me:27017',
+                  vcpu: vcpu,
+                  ram: ram,
+                  disk: data.diskSize,
+                  region: regionValue,
+                  flag: flagValue,
+                  ip: data.ip
+              }
+              this.setState(newState);
+        }
+
     };
 
     render() {
@@ -43,7 +117,7 @@ class InstanceOverviewSingleNode extends Component {
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell>
-                                Virtual CPU
+                                Virtual CPUs
                             </Table.Cell>
                             <Table.Cell>
                                 { this.state.vcpu }

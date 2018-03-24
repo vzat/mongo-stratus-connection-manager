@@ -109,8 +109,6 @@ class ServerList extends Component {
           </Breadcrumb>
       );
 
-      console.log(this.props.instanceName);
-
       return (
         <div className = "Header">
             <Segment attached = 'top'>
