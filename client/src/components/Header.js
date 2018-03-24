@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/Header.css';
 
-import { Segment, Image, Dropdown, Loader, Transition, Button, Breadcrumb } from 'semantic-ui-react';
+import { Segment, Image, Dropdown, Loader, Transition, Button, Breadcrumb, Icon } from 'semantic-ui-react';
 
 import logo from './resources/images/MongoStratusLogo.svg';
 
@@ -122,6 +122,7 @@ class ServerList extends Component {
                 />
 
                 <div className = 'username-dropdown'>
+                    <Icon name = 'user circle' />
                     <Dropdown text = {username} direction = 'left' inline compact>
                         <Dropdown.Menu>
                             <Dropdown.Item text = 'Account Details' />

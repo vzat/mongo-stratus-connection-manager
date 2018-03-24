@@ -4,65 +4,13 @@ import './css/InstanceOverview.css';
 
 import { Segment, Table, Grid, Statistic, Divider } from 'semantic-ui-react';
 
+import InstanceOverviewSingleNode from './InstanceOverviewSingleNode';
+
 class InstanceOverview extends Component {
     render() {
         const { instanceInfo } = this.props;
 
-        const table = (
-            <div className = 'server-table'>
-                <Table celled singleLine collapsing className = 'server-table'>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell colSpan = '2'>
-                                lee2-instance1.mongostratus.me:27017
-                            </Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>
-                                Virtual CPU
-                            </Table.Cell>
-                            <Table.Cell>
-                                0.2
-                            </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>
-                                Memory (GB)
-                            </Table.Cell>
-                            <Table.Cell>
-                                0.60
-                            </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>
-                                Disk Space (GB)
-                            </Table.Cell>
-                            <Table.Cell>
-                                10
-                            </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>
-                                Region
-                            </Table.Cell>
-                            <Table.Cell>
-                                N. Virginia
-                            </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>
-                                IP Address
-                            </Table.Cell>
-                            <Table.Cell>
-                                78.106.68.1
-                            </Table.Cell>
-                        </Table.Row>
-                    </Table.Body>
-                </Table>
-            </div>
-        );
+
 
         return (
           <div className="InstanceOverview">
@@ -91,13 +39,13 @@ class InstanceOverview extends Component {
                 </Grid.Row>
             </Grid>
 
-            <Divider />
+            <Divider fitted />
 
-            <div className = 'servers'>
+            {
+                instanceInfo.type === 'Single Node' &&
+                <InstanceOverviewSingleNode />
+            }
 
-                { table } { table } { table } { table } { table }
-
-            </div>
           </div>
         );
     }
