@@ -5,11 +5,12 @@ import './css/InstancePage.css';
 import Header from './Header';
 import InstanceMenu from './InstanceMenu';
 import InstanceOverview from './InstanceOverview';
+import DatabaseList from './DatabaseList';
 import Settings from './Settings';
 
 import db from './utils/db';
 
-import { Grid, Segment, Sidebar, Menu, List, Divider } from 'semantic-ui-react';
+import { } from 'semantic-ui-react';
 
 class InstancePage extends Component {
     state = {
@@ -121,6 +122,13 @@ class InstancePage extends Component {
                     <InstanceOverview
                         username = {this.props.username}
                         instanceInfo = {this.state.instanceInfo}
+                    />
+                }
+                {
+                    this.state.currentPage === 'databases' &&
+                    <DatabaseList
+                        username = {this.props.username}
+                        instance = {this.state.instanceInfo.instanceName}
                     />
                 }
                 {

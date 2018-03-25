@@ -67,7 +67,7 @@ class ServerList extends Component {
   };
 
   hideNotification = async () => {
-      const res = await fetch('/api/v1/internal/hide/notification', {
+      await fetch('/api/v1/internal/hide/notification', {
           method: 'POST',
           credentials: 'include',
           headers: {

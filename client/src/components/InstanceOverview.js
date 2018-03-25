@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/InstanceOverview.css';
 
-import { Segment, Table, Grid, Statistic, Divider } from 'semantic-ui-react';
+import { Grid, Statistic, Divider } from 'semantic-ui-react';
 
 import InstanceOverviewSingleNode from './InstanceOverviewSingleNode';
 

@@ -71,7 +71,7 @@ class ServerList extends Component {
     }
 
     componentWillReceiveProps = async (nextProps) => {
-        if (nextProps.username != this.props.username) {
+        if (nextProps.username !== this.props.username) {
             await this.getInstances(nextProps.username);
         }
         if (nextProps.refreshServerList && nextProps.refreshServerList === true) {

@@ -4,12 +4,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import './css/App.css';
 
-// import Header from './Header';
-// import ServerList from './ServersList';
-// import CreateServer from './CreateServer';
 import MainPage from './MainPage';
 import InstancePage from './InstancePage';
-import DatabasePage from './DatabasePage';
 
 class App extends Component {
     state = {

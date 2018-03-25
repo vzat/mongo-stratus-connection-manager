@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Table, Label, Icon, Flag, Popup } from 'semantic-ui-react';
+import { Table, Icon, Flag, Popup } from 'semantic-ui-react';
 
 import db from './utils/db';
 
@@ -91,7 +91,7 @@ class InstanceOverviewSingleNode extends Component {
     render() {
         const table = (
             <div className = 'server-table'>
-                <Table celled singleLine collapsing className = 'server-table'>
+                <Table celled singleLine collapsing unstackable className = 'server-table'>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan = '2'>

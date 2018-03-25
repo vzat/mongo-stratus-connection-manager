@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/InstanceMenu.css';
 
-import { Menu, Divider, Header, List, Statistic } from 'semantic-ui-react';
+import { Menu } from 'semantic-ui-react';
 
 class InstanceMenu extends Component {
     state = {
@@ -18,8 +18,6 @@ class InstanceMenu extends Component {
     };
 
     render() {
-        const { instanceInfo } = this.props;
-
         return (
           <div className="InstanceMenu">
                 <Menu secondary pointing stackable color = 'green' className = 'nav-menu'>
@@ -31,6 +29,9 @@ class InstanceMenu extends Component {
                     </Menu.Item>
                     <Menu.Item name = 'users' active = {this.state.menuActive === 'users'} onClick = {this.handleMenuClick}>
                         Users
+                    </Menu.Item>
+                    <Menu.Item name = 'backup' active = {this.state.menuActive === 'backup'} onClick = {this.handleMenuClick}>
+                        Backup
                     </Menu.Item>
                     <Menu.Item name = 'settings' active = {this.state.menuActive === 'settings'} onClick = {this.handleMenuClick}>
                         Settings
