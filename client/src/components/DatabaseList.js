@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/DatabaseList.css';
 
-import { List, Button, Icon, Container, Grid, Header, Segment, Table, Divider } from 'semantic-ui-react';
+import { List, Button, Icon, Container, Grid, Header, Segment, Table, Divider, Modal, Input } from 'semantic-ui-react';
 
 import db from './utils/db';
 
@@ -120,10 +120,30 @@ class DatabaseList extends Component {
                   <Table.Footer>
                       <Table.Row>
                           <Table.HeaderCell colSpan = '3'>
-                              <Button icon color = 'green' labelPosition = 'left' icon = 'plus' >
-                                  <Icon name = 'plus' />
-                                  Create Database
-                              </Button>
+                              <Modal closeIcon
+                              size = 'fullscreen'
+                              closeOnEscape = {true}
+                              closeOnRootNodeClick = {true}
+                              style = {{
+                                  marginTop: '40vh',
+                                  maxWidth: 400
+                              }}
+                              trigger = {
+                                <Button icon color = 'green' labelPosition = 'left' icon = 'plus' >
+                                    <Icon name = 'plus' />
+                                    Create Database
+                                </Button>
+                              } >
+                                  <Modal.Header>
+                                      Create a new Database
+                                  </Modal.Header>
+                                  <Modal.Content>
+                                      <Input fluid placeholder = 'Database Name' />
+                                  </Modal.Content>
+                                  <Modal.Actions>
+                                      <Button color = 'green'> Create Database </Button>
+                                  </Modal.Actions>
+                              </Modal>
                           </Table.HeaderCell>
                       </Table.Row>
                   </Table.Footer>
