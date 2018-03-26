@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import './css/DatabaseList.css';
 
+import EditSchema from './EditSchema';
+
 import { List, Button, Icon, Container, Grid, Header, Segment, Table, Divider, Modal, Input, Dimmer, Loader, Confirm } from 'semantic-ui-react';
 
 import db from './utils/db';
@@ -22,7 +24,9 @@ class DatabaseList extends Component {
         loadingCreateDatabase: false,
         confirmDeleteDatabase: false,
         loadingDeleteDatabase: false,
-        deleteDatabase: undefined
+        deleteDatabase: undefined,
+        modalEditSchema: false,
+        editSchemaDatabase: undefined
     };
 
     handleChange = (event) => {
@@ -40,6 +44,18 @@ class DatabaseList extends Component {
     confirmDelete = (modalName, dbIndex) => {
         this.setState({deleteDatabase: dbIndex});
         this.openModal(modalName);
+    }
+
+    openEditSchema = (event, comp) => {
+        if (comp.id !== undefined && this.state.databases[comp.id].name !== undefined) {
+            this.setState({editSchemaDatabase: this.state.databases[comp.id].name});
+            this.openModal('modalEditSchema');
+        }
+    }
+
+    closeEditSchema = (event, comp) => {
+        this.closeModal('modalEditSchema');
+        this.setState({editSchemaDatabase: undefined});
     }
 
     getDatabases = async (username) => {
@@ -153,7 +169,12 @@ class DatabaseList extends Component {
                     {this.sizeOnDiskToString(database.sizeOnDisk)}
                 </Table.Cell>
                 <Table.Cell collapsing>
-                    <Button icon = 'edit' compact />
+                    <Button compact
+                        id = {index}
+                        name = 'editSchema'
+                        icon = 'edit'
+                        onClick = {this.openEditSchema}
+                    />
                     <Button compact
                         id = {index}
                         name = 'deleteDatabase'
@@ -195,34 +216,35 @@ class DatabaseList extends Component {
                               </Button>
 
                               <Modal closeIcon
-                              size = 'fullscreen'
-                              name = 'modalCreateDatabase'
-                              open = {this.state.modalCreateDatabase}
-                              closeOnEscape = {true}
-                              closeOnRootNodeClick = {true}
-                              onClose = {() => this.closeModal('modalCreateDatabase')}
-                              style = {{
-                                  marginTop: '40vh',
-                                  maxWidth: 400
-                              }} >
-                                  <Modal.Header>
-                                      Create a new Database
-                                  </Modal.Header>
-                                  <Modal.Content>
-                                      <Input fluid
-                                          name = 'inputDatabaseName'
-                                          placeholder = 'Database Name'
-                                          value = {this.state.inputDatabaseName}
-                                          onChange = {this.handleChange}
-                                      />
+                                  size = 'fullscreen'
+                                  name = 'modalCreateDatabase'
+                                  open = {this.state.modalCreateDatabase}
+                                  closeOnEscape = {true}
+                                  closeOnRootNodeClick = {true}
+                                  onClose = {() => this.closeModal('modalCreateDatabase')}
+                                  style = {{
+                                      marginTop: '40vh',
+                                      maxWidth: 400
+                                  }} >
+                                      <Modal.Header>
+                                          Create a new Database
+                                      </Modal.Header>
+                                      <Modal.Content>
+                                          <Input fluid
+                                              name = 'inputDatabaseName'
+                                              placeholder = 'Database Name'
+                                              value = {this.state.inputDatabaseName}
+                                              onChange = {this.handleChange}
+                                          />
 
-                                      <Dimmer active = { this.state.loadingCreateDatabase } >
-                                          <Loader content = 'Loading' />
-                                      </Dimmer>
-                                  </Modal.Content>
-                                  <Modal.Actions>
-                                      <Button color = 'green' onClick = {this.createDatabase} > Create Database </Button>
-                                  </Modal.Actions>
+                                          <Dimmer active = { this.state.loadingCreateDatabase } >
+                                              <Loader content = 'Loading' />
+                                          </Dimmer>
+                                      </Modal.Content>
+                                      <Modal.Actions>
+                                          <Button onClick = {() => this.closeModal('modalCreateDatabase')} > Cancel </Button>
+                                          <Button color = 'green' onClick = {this.createDatabase} > Create Database </Button>
+                                      </Modal.Actions>
                               </Modal>
                           </Table.HeaderCell>
                       </Table.Row>
@@ -254,6 +276,14 @@ class DatabaseList extends Component {
                       marginTop: '40vh',
                       maxWidth: 800
                   }}
+              />
+
+              <EditSchema
+                  username = {this.props.username}
+                  instance = {this.props.instance}
+                  database = {this.state.editSchemaDatabase}
+                  closeEditSchema = {this.closeEditSchema}
+                  open = {this.state.modalEditSchema}
               />
           </div>
         );
