@@ -43,7 +43,7 @@ class Settings extends Component {
                   confirmButton = 'Delete Instance'
                   size = 'fullscreen'
                   style = {{
-                      marginTop: 0,
+                      marginTop: '40vh',
                       maxWidth: 800
                   }}
               />

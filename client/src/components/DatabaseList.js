@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/DatabaseList.css';
 
-import { List, Button, Icon, Container, Grid, Header, Segment, Table, Divider, Modal, Input } from 'semantic-ui-react';
+import { List, Button, Icon, Container, Grid, Header, Segment, Table, Divider, Modal, Input, Dimmer, Loader, Confirm } from 'semantic-ui-react';
 
 import db from './utils/db';
 
@@ -16,14 +16,73 @@ class DatabaseList extends Component {
             '__________',
             '__________',
             '__________'
-        ]
+        ],
+        inputDatabaseName: '',
+        modalCreateDatabase: false,
+        loadingCreateDatabase: false,
+        confirmDeleteDatabase: false,
+        loadingDeleteDatabase: false,
+        deleteDatabase: undefined
     };
+
+    handleChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
+    openModal = (name) => {
+        this.setState({[name]: true});
+    };
+
+    closeModal = (name) => {
+        this.setState({[name]: false});
+    };
+
+    confirmDelete = (modalName, dbIndex) => {
+        this.setState({deleteDatabase: dbIndex});
+        this.openModal(modalName);
+    }
 
     getDatabases = async (username) => {
         const res = await db.getDatabases(username, this.props.instance);
         if (res && res.ok && res.ok === 1) {
             const databases = res.data;
             this.setState({databases: databases});
+        }
+    };
+
+    createDatabase = async () => {
+        this.setState({loadingCreateDatabase: true});
+        const databaseName = this.state.inputDatabaseName;
+        await db.createDatabase(this.props.username, this.props.instance, databaseName);
+
+        // Close modal, remove data from input, and close loading dimmer
+        this.setState({loadingCreateDatabase: false});
+        this.closeModal('modalCreateDatabase');
+        this.setState({inputDatabaseName: ''});
+
+        // Refresh database list
+        if (this.props.username) {
+            this.getDatabases(this.props.username);
+        }
+    };
+
+    deleteDatabase = async () => {
+        if (this.state.deleteDatabase === undefined || this.state.deleteDatabase < 0)
+            return;
+
+        this.setState({loadingDeleteDatabase: true});
+        const dbToDelete = this.state.databases[this.state.deleteDatabase];
+        const databaseName = dbToDelete.name;
+        await db.deleteDatabase(this.props.username, this.props.instance, databaseName);
+
+        // Close confirm, deselect db to delete, and close loading dimmer
+        this.closeModal('confirmDeleteDatabase');
+        this.setState({deleteDatabase: undefined});
+        this.setState({loadingDeleteDatabase: false});
+
+        // Refresh database list
+        if (this.props.username) {
+            this.getDatabases(this.props.username);
         }
     };
 
@@ -95,7 +154,13 @@ class DatabaseList extends Component {
                 </Table.Cell>
                 <Table.Cell collapsing>
                     <Button icon = 'edit' compact />
-                    <Button icon = 'trash' color = 'red' compact/>
+                    <Button compact
+                        id = {index}
+                        name = 'deleteDatabase'
+                        icon = 'trash'
+                        color = 'red'
+                        onClick = {() => this.confirmDelete('confirmDeleteDatabase', index)}
+                    />
                 </Table.Cell>
             </Table.Row>
         ));
@@ -120,28 +185,43 @@ class DatabaseList extends Component {
                   <Table.Footer>
                       <Table.Row>
                           <Table.HeaderCell colSpan = '3'>
+                              <Button icon
+                                  color = 'green'
+                                  labelPosition = 'left'
+                                  icon = 'plus'
+                                  onClick = {() => this.openModal('modalCreateDatabase')} >
+                                  <Icon name = 'plus' />
+                                  Create Database
+                              </Button>
+
                               <Modal closeIcon
                               size = 'fullscreen'
+                              name = 'modalCreateDatabase'
+                              open = {this.state.modalCreateDatabase}
                               closeOnEscape = {true}
                               closeOnRootNodeClick = {true}
+                              onClose = {() => this.closeModal('modalCreateDatabase')}
                               style = {{
                                   marginTop: '40vh',
                                   maxWidth: 400
-                              }}
-                              trigger = {
-                                <Button icon color = 'green' labelPosition = 'left' icon = 'plus' >
-                                    <Icon name = 'plus' />
-                                    Create Database
-                                </Button>
-                              } >
+                              }} >
                                   <Modal.Header>
                                       Create a new Database
                                   </Modal.Header>
                                   <Modal.Content>
-                                      <Input fluid placeholder = 'Database Name' />
+                                      <Input fluid
+                                          name = 'inputDatabaseName'
+                                          placeholder = 'Database Name'
+                                          value = {this.state.inputDatabaseName}
+                                          onChange = {this.handleChange}
+                                      />
+
+                                      <Dimmer active = { this.state.loadingCreateDatabase } >
+                                          <Loader content = 'Loading' />
+                                      </Dimmer>
                                   </Modal.Content>
                                   <Modal.Actions>
-                                      <Button color = 'green'> Create Database </Button>
+                                      <Button color = 'green' onClick = {this.createDatabase} > Create Database </Button>
                                   </Modal.Actions>
                               </Modal>
                           </Table.HeaderCell>
@@ -149,6 +229,32 @@ class DatabaseList extends Component {
                   </Table.Footer>
               </Table>
               </Container>
+
+              <Confirm
+                  open = {this.state.confirmDeleteDatabase}
+                  onCancel = {() => this.closeModal('confirmDeleteDatabase')}
+                  onConfirm = {() => this.deleteDatabase()}
+                  header = {
+                      this.state.deleteDatabase >= 0 &&
+                      <Header>
+                          Are you sure you want to drop the database "{this.state.databases[this.state.deleteDatabase].name}"?
+                      </Header>
+                  }
+                  content = {
+                    <Modal.Content>
+                        All data will be permanently deleted. You cannot undo this action.
+                        <Dimmer active = { this.state.loadingDeleteDatabase } >
+                            <Loader content = 'Loading' />
+                        </Dimmer>
+                    </Modal.Content>
+                  }
+                  confirmButton = 'Drop Database'
+                  size = 'fullscreen'
+                  style = {{
+                      marginTop: '40vh',
+                      maxWidth: 800
+                  }}
+              />
           </div>
         );
     }
