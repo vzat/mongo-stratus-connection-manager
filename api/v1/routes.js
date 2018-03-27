@@ -270,6 +270,29 @@ routes.put('/:username/:instance/:database/schema', async (req, res) => {
     }
 });
 
+routes.get('/:username/:instance/:database/schema', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const database = req.params.database;
+
+        const schema = await db.getSchema(username, instance, database);
+
+        if (schema) {
+            res.end(JSON.stringify({'ok': 1, 'schema': schema}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'error': err}));
+    }
+});
+
 routes.delete('/:username/:instance', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 

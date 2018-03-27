@@ -27,6 +27,19 @@ const utils = {
         }
 
         return newStr;
+    },
+    removeSquareBrackets: (str) => {
+        let bracketIndex = str.indexOf('[');
+        if (bracketIndex != -1) {
+            str = str.substr(0, bracketIndex) + str.substr(bracketIndex + 1);
+        }
+
+        bracketIndex = str.indexOf(']');
+        if (bracketIndex != -1) {
+            str = str.substr(0, bracketIndex) + str.substr(bracketIndex + 1);
+        }
+
+        return str;
     }
 };
 

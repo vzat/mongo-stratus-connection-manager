@@ -33,6 +33,93 @@ class EditSchema extends Component {
         }]
     };
 
+    getSchema = async (username, instance, database) => {
+        const res = await db.getSchema(username, instance, database);
+
+        if (res && res.ok && res.ok === 1) {
+            let schema = await JSON.parse(res.schema);
+
+            // Get list of collections without square brackets
+            let collections = schema.Query;
+            let collectionsList = [];
+            for (const collectionName in collections) {
+                let newCollectionName = utils.removeSquareBrackets(collections[collectionName]);
+                collectionsList.push(newCollectionName);
+            }
+
+            delete schema.Query;
+
+            let state = this.state;
+            state.collections = [];
+            state.customObjects = [];
+
+            for (const object in schema) {
+
+                const item = {
+                    name: object,
+                    fields: []
+                };
+
+                for (const fieldName in schema[object]) {
+                    let fieldType = schema[object][fieldName];
+
+                    if (fieldType.indexOf('[') !== -1 && fieldType.indexOf(']') !== -1) {
+                        // Array
+                        const field = {
+                            name: fieldName,
+                            type: utils.removeSquareBrackets(fieldType),
+                            array: true
+                        };
+                        item.fields.push(field);
+                    }
+                    else {
+                        const field = {
+                            name: fieldName,
+                            type: fieldType,
+                            array: false
+                        };
+                        item.fields.push(field);
+                    }
+                }
+
+                if (collectionsList.indexOf(object) !== -1) {
+                    if (item.name.lastIndexOf('_Documents') !== -1) {
+                        item.name = item.name.substring(0, item.name.indexOf('_Documents'));
+                    }
+
+                    // Add to collections
+                    state.collections.push(item);
+                }
+                else {
+                    // Add to custom objects
+                    state.customObjects.push(item);
+                    state.primitives.push({
+                        text: item.name,
+                        value: item.name
+                    });
+                }
+            }
+
+            this.setState({state: state});
+        }
+    };
+
+    componentDidMount = async () => {
+        if (this.props.username && this.props.instance && this.props.database) {
+            this.getSchema(this.props.username, this.props.instance, this.props.database);
+        }
+    };
+
+    componentWillReceiveProps = (nextProps) => {
+        if (nextProps.username !== undefined &&
+            nextProps.instance !== undefined &&
+            nextProps.database !== undefined &&
+            this.state.collections.length === 0 &&
+            this.state.customObjects.length === 0) {
+                this.getSchema(nextProps.username, nextProps.instance, nextProps.database);
+        }
+    };
+
     handleFieldChange = (event, comp) => {
         let { collections } = this.state;
 
@@ -274,9 +361,7 @@ class EditSchema extends Component {
             schema: schema
         });
 
-        const res = await db.editSchema(this.props.username, this.props.instance, this.props.database);
-
-        console.log(res);
+        const res = await db.editSchema(this.props.username, this.props.instance, this.props.database, schemaJSON);
     };
 
     render() {
