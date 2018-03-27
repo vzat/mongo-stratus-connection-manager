@@ -4,7 +4,7 @@ import './css/DatabaseList.css';
 
 import EditSchema from './EditSchema';
 
-import { List, Button, Icon, Container, Grid, Header, Segment, Table, Divider, Modal, Input, Dimmer, Loader, Confirm } from 'semantic-ui-react';
+import { Button, Icon, Container, Header, Table, Modal, Input, Dimmer, Loader, Confirm } from 'semantic-ui-react';
 
 import db from './utils/db';
 
@@ -209,10 +209,9 @@ class DatabaseList extends Component {
                               <Button icon
                                   color = 'green'
                                   labelPosition = 'left'
-                                  icon = 'plus'
                                   onClick = {() => this.openModal('modalCreateDatabase')} >
-                                  <Icon name = 'plus' />
-                                  Create Database
+                                      <Icon name = 'plus' />
+                                      Create Database
                               </Button>
 
                               <Modal closeIcon

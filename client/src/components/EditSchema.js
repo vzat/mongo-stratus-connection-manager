@@ -1,37 +1,13 @@
 import React, { Component } from 'react';
 
-import { Modal, Button, Icon, Header, Table, Dropdown, Checkbox, Divider, Tab, Input } from 'semantic-ui-react';
+import { Modal, Button, Icon, Table, Dropdown, Checkbox, Divider, Tab, Input } from 'semantic-ui-react';
 
 class EditSchema extends Component {
     state = {
         databaseName: 'dbName',
         disableAppy: false,
-        collections: [{
-            name: 'Accounts',
-            fields: [{
-                name: '_id',
-                type: 'ID',
-                array: false
-            },
-            {
-                name: 'databases',
-                type: 'Database',
-                array: true
-            }]
-        }],
-        customObjects: [{
-            name: 'Database',
-            fields: [{
-                name: 'serverName',
-                type: 'String',
-                array: false
-            },
-            {
-                name: 'ip',
-                type: 'String',
-                array: true
-            }]
-        }],
+        collections: [],
+        customObjects: [],
         primitives: [{
             text: 'ID',
             value: 'ID'
@@ -51,10 +27,6 @@ class EditSchema extends Component {
         {
             text: 'Boolean',
             value: 'Boolean'
-        },
-        {
-            text: 'Database',
-            value: 'Database'
         }]
     };
 
@@ -62,55 +34,123 @@ class EditSchema extends Component {
         let { collections } = this.state;
 
         if (comp.name === 'collection-name') {
-             collections[comp.collectionID].fields[comp.fieldID].name = comp.value;
+             collections[comp.collectionid].fields[comp.fieldid].name = comp.value;
          }
 
          if (comp.name === 'collection-field') {
-            collections[comp.collectionID].fields[comp.fieldID].type = comp.value;
+            collections[comp.collectionid].fields[comp.fieldid].type = comp.value;
          }
 
          if (comp.name === 'collection-array') {
-             collections[comp.collectionID].fields[comp.fieldID].array = !collections[comp.collectionID].fields[comp.fieldID].array;
+             collections[comp.collectionid].fields[comp.fieldid].array = !collections[comp.collectionid].fields[comp.fieldid].array;
          }
 
          this.setState({collection: collections});
+    };
+
+    handleObjectFieldChange = (event, comp) => {
+        let { customObjects } = this.state;
+
+        if (comp.name === 'object-name') {
+             customObjects[comp.customobjectid].fields[comp.fieldid].name = comp.value;
+         }
+
+         if (comp.name === 'object-field') {
+            customObjects[comp.customobjectid].fields[comp.fieldid].type = comp.value;
+         }
+
+         if (comp.name === 'object-array') {
+             customObjects[comp.customobjectid].fields[comp.fieldid].array = !customObjects[comp.customobjectid].fields[comp.fieldid].array;
+         }
+
+         this.setState({customObjects: customObjects});
     };
 
     newField = (event, comp) => {
         let { collections } = this.state;
 
         let field = {
-            name: 'field_name',
+            name: '',
             type: 'String',
             array: false
         };
 
-        collections[comp.collectionID].fields.push(field);
+        collections[comp.collectionid].fields.push(field);
 
         this.setState({collection: collections});
+    };
+
+    newObjectField = (event, comp) => {
+        let { customObjects } = this.state;
+
+        let field = {
+            name: '',
+            type: 'String',
+            array: false
+        };
+
+        customObjects[comp.customobjectid].fields.push(field);
+
+        this.setState({customObjects: customObjects});
     };
 
     removeField = (event, comp) => {
         let { collections } = this.state;
 
-        collections[comp.collectionID].fields.splice(comp.fieldID, 1);
+        collections[comp.collectionid].fields.splice(comp.fieldid, 1);
 
         this.setState({collection: collections});
+    };
+
+    removeObjectField = (event, comp) => {
+        let { customObjects } = this.state;
+
+        customObjects[comp.customobjectid].fields.splice(comp.fieldid, 1);
+
+        this.setState({customObjects: customObjects});
     };
 
     handleCollectionChange = (event, comp) => {
         let { collections } = this.state;
 
-        collections[comp.collectionID].name = comp.value;
+        collections[comp.collectionid].name = comp.value;
 
         this.setState({collection: collections});
+    };
+
+    handleObjectChange = (event, comp) => {
+        let { customObjects } = this.state;
+        const modifiedCustomObject = customObjects[comp.customobjectid].name;
+
+        customObjects[comp.customobjectid].name = comp.value;
+
+        // Remove previous primitive
+        let { primitives } = this.state;
+        for (let primitiveIndex = 0 ; primitiveIndex < primitives.length ; primitiveIndex ++) {
+            if (primitives[primitiveIndex].text === modifiedCustomObject) {
+                primitives.splice(primitiveIndex, 1);
+                break;
+            }
+        }
+
+        // Add new primitive
+        if (comp.value !== '') {
+            const primitive = {
+                text: comp.value,
+                value: comp.value
+            };
+            primitives.push(primitive);
+        }
+
+        this.setState({customObjects: customObjects});
+        this.setState({primitives: primitives});
     };
 
     newCollection = (event, comp) => {
         let { collections } = this.state;
 
         let collection = {
-            name: 'collection_name',
+            name: '',
             fields: [{
                 name: '_id',
                 type: 'ID',
@@ -123,12 +163,47 @@ class EditSchema extends Component {
         this.setState({collection: collections});
     };
 
+    newObject = (event, comp) => {
+        let { customObjects } = this.state;
+
+        let object = {
+            name: '',
+            fields: [{
+                name: '',
+                type: 'String',
+                array: false
+            }]
+        };
+        customObjects.push(object);
+
+        this.setState({customObjects: customObjects});
+    };
+
     removeCollection = (event, comp) => {
         let { collections } = this.state;
 
-        collections.splice(comp.collectionID, 1);
+        collections.splice(comp.collectionid, 1);
 
         this.setState({collection: collections});
+    };
+
+    removeObject = (event, comp) => {
+        let { customObjects } = this.state;
+        const removedCustomObject = customObjects[comp.customobjectid].name;
+
+        customObjects.splice(comp.customobjectid, 1);
+
+        // Remove object from the primitives dropdown
+        let { primitives } = this.state;
+        for (let primitiveIndex = 0 ; primitiveIndex < primitives.length ; primitiveIndex ++) {
+            if (primitives[primitiveIndex].text === removedCustomObject) {
+                primitives.splice(primitiveIndex, 1);
+                break;
+            }
+        }
+
+        this.setState({customObjects: customObjects});
+        this.setState({primitives: primitives});
     };
 
     handleChange = (event) => {
@@ -139,20 +214,21 @@ class EditSchema extends Component {
         const { database } = this.props;
         const { open } = this.props;
         const { collections } = this.state;
+        const { customObjects } = this.state;
 
         const collectionList = collections.map((collection, collectionIndex) => (
             <div>
                 <Input
                     label = 'Collection Name'
                     attached = 'left'
-                    collectionID = {collectionIndex}
+                    collectionid = {collectionIndex}
                     value = {collection.name}
                     error = {this.state.collections[collectionIndex].name === ''}
                     onChange = {this.handleCollectionChange}
                 />
 
                 <Button basic attached = 'right'
-                    collectionID = {collectionIndex}
+                    collectionid = {collectionIndex}
                     icon = 'remove'
                     color = 'red'
                     onClick = {this.removeCollection}
@@ -174,9 +250,10 @@ class EditSchema extends Component {
                             <Table.Row>
                                 <Table.Cell width = '5'>
                                     <Input fluid
-                                        collectionID = {collectionIndex}
-                                        fieldID = {fieldIndex}
+                                        collectionid = {collectionIndex}
+                                        fieldid = {fieldIndex}
                                         name = 'collection-name'
+                                        placeholder = 'Field Name'
                                         value = {field.name}
                                         error = {this.state.collections[collectionIndex].fields[fieldIndex].name === ''}
                                         onChange = {this.handleFieldChange}
@@ -184,8 +261,8 @@ class EditSchema extends Component {
                                 </Table.Cell>
                                 <Table.Cell width = '5'>
                                     <Dropdown selection
-                                        collectionID = {collectionIndex}
-                                        fieldID = {fieldIndex}
+                                        collectionid = {collectionIndex}
+                                        fieldid = {fieldIndex}
                                         name = 'collection-field'
                                         options = {this.state.primitives}
                                         value = {this.state.collections[collectionIndex].fields[fieldIndex].type}
@@ -194,8 +271,8 @@ class EditSchema extends Component {
                                 </Table.Cell>
                                 <Table.Cell>
                                     <Checkbox
-                                        collectionID = {collectionIndex}
-                                        fieldID = {fieldIndex}
+                                        collectionid = {collectionIndex}
+                                        fieldid = {fieldIndex}
                                         name = 'collection-array'
                                         checked = {this.state.collections[collectionIndex].fields[fieldIndex].array}
                                         onChange = {this.handleFieldChange}
@@ -203,8 +280,8 @@ class EditSchema extends Component {
                                 </Table.Cell>
                                 <Table.Cell collapsing>
                                     <Button basic
-                                        collectionID = {collectionIndex}
-                                        fieldID = {fieldIndex}
+                                        collectionid = {collectionIndex}
+                                        fieldid = {fieldIndex}
                                         icon = 'remove'
                                         color = 'red'
                                         size = 'mini'
@@ -221,10 +298,109 @@ class EditSchema extends Component {
                         <Table.Row>
                             <Table.HeaderCell colSpan = '4'>
                                 <Button icon basic fluid
-                                    collectionID = {collectionIndex}
+                                    collectionid = {collectionIndex}
                                     color = 'green'
                                     labelPosition = 'left'
                                     onClick = {this.newField} >
+                                        <Icon name = 'plus' />
+                                        New Field
+                                </Button>
+                            </Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Footer>
+
+                </Table>
+
+                <Divider section />
+            </div>
+        ));
+
+        const objectsList = customObjects.map((customObject, customObjectIndex) => (
+            <div>
+                <Input
+                    label = 'Object Name'
+                    attached = 'left'
+                    customobjectid = {customObjectIndex}
+                    value = {customObject.name}
+                    error = {this.state.customObjects[customObjectIndex].name === ''}
+                    onChange = {this.handleObjectChange}
+                />
+
+                <Button basic attached = 'right'
+                    customobjectid = {customObjectIndex}
+                    icon = 'remove'
+                    color = 'red'
+                    onClick = {this.removeObject}
+                />
+
+                <Table singleLine unstackable selectable>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell> Field </Table.HeaderCell>
+                            <Table.HeaderCell> Type </Table.HeaderCell>
+                            <Table.HeaderCell> Array </Table.HeaderCell>
+                            <Table.HeaderCell />
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+
+                    {
+                        customObject.fields.map((field, fieldIndex) => (
+                            <Table.Row>
+                                <Table.Cell width = '5'>
+                                    <Input fluid
+                                        customobjectid = {customObjectIndex}
+                                        fieldid = {fieldIndex}
+                                        name = 'object-name'
+                                        placeholder = 'Field Name'
+                                        value = {field.name}
+                                        error = {this.state.customObjects[customObjectIndex].fields[fieldIndex].name === ''}
+                                        onChange = {this.handleObjectFieldChange}
+                                    />
+                                </Table.Cell>
+                                <Table.Cell width = '5'>
+                                    <Dropdown selection
+                                        customobjectid = {customObjectIndex}
+                                        fieldid = {fieldIndex}
+                                        name = 'object-field'
+                                        options = {this.state.primitives}
+                                        value = {this.state.customObjects[customObjectIndex].fields[fieldIndex].type}
+                                        onChange = {this.handleObjectFieldChange}
+                                    />
+                                </Table.Cell>
+                                <Table.Cell>
+                                    <Checkbox
+                                        customobjectid = {customObjectIndex}
+                                        fieldid = {fieldIndex}
+                                        name = 'object-array'
+                                        checked = {this.state.customObjects[customObjectIndex].fields[fieldIndex].array}
+                                        onChange = {this.handleObjectFieldChange}
+                                    />
+                                </Table.Cell>
+                                <Table.Cell collapsing>
+                                    <Button basic
+                                        customobjectid = {customObjectIndex}
+                                        fieldid = {fieldIndex}
+                                        icon = 'remove'
+                                        color = 'red'
+                                        size = 'mini'
+                                        onClick = {this.removeObjectField}
+                                    />
+                                </Table.Cell>
+                            </Table.Row>
+                        ))
+                    }
+
+                    </Table.Body>
+
+                    <Table.Footer>
+                        <Table.Row>
+                            <Table.HeaderCell colSpan = '4'>
+                                <Button icon basic fluid
+                                    customobjectid = {customObjectIndex}
+                                    color = 'green'
+                                    labelPosition = 'left'
+                                    onClick = {this.newObjectField} >
                                         <Icon name = 'plus' />
                                         New Field
                                 </Button>
@@ -254,7 +430,19 @@ class EditSchema extends Component {
             )
         },
         {
-            menuItem: 'Custom Types', pane: { key: 'custom', content: 'Create Objects' }
+            menuItem: 'Custom Object Types', pane: (
+                <Tab.Pane key = 'custom'>
+                    { objectsList }
+
+                    <Button icon fluid
+                        color = 'green'
+                        labelPosition = 'left'
+                        onClick = {this.newObject} >
+                            <Icon name = 'plus' />
+                            New Object Type
+                    </Button>
+                </Tab.Pane>
+            )
         }];
 
         return (
