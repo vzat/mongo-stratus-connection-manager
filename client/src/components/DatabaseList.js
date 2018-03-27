@@ -53,7 +53,7 @@ class DatabaseList extends Component {
         }
     }
 
-    closeEditSchema = (event, comp) => {
+    closeEditSchema = () => {
         this.closeModal('modalEditSchema');
         this.setState({editSchemaDatabase: undefined});
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Modal, Button, Icon, Table, Dropdown, Checkbox, Divider, Tab, Input } from 'semantic-ui-react';
+import { Modal, Button, Icon, Table, Dropdown, Checkbox, Divider, Tab, Input, Dimmer, Loader } from 'semantic-ui-react';
 
 import db from './utils/db';
 import utils from './utils/utils';
@@ -30,7 +30,8 @@ class EditSchema extends Component {
         {
             text: 'Boolean',
             value: 'Boolean'
-        }]
+        }],
+        loading: false
     };
 
     getSchema = async (username, instance, database) => {
@@ -301,6 +302,8 @@ class EditSchema extends Component {
     };
 
     editSchema = async () => {
+        this.setState({loading: true});
+
         let schema = {
             Query: {}
         };
@@ -328,8 +331,9 @@ class EditSchema extends Component {
                     }
                 }
 
-                schema.Query[collection.name] = '[' + collection.name + '_Documents' + ']';
-                schema[collection.name + '_Documents'] = collectionSchema;
+                let collectionName = utils.toProperCase(collection.name);
+                schema.Query[collection.name] = '[' + collectionName + '_Documents' + ']';
+                schema[collectionName + '_Documents'] = collectionSchema;
             }
         }
 
@@ -353,7 +357,8 @@ class EditSchema extends Component {
                     }
                 }
 
-                schema[customObject.name] = customObjectSchema;
+                let customObjectName = utils.toProperCase(customObject.name);
+                schema[customObjectName] = customObjectSchema;
             }
         }
 
@@ -362,6 +367,33 @@ class EditSchema extends Component {
         });
 
         const res = await db.editSchema(this.props.username, this.props.instance, this.props.database, schemaJSON);
+
+        this.setState({collections: []});
+        this.setState({customObjects: []});
+        this.setState({
+            primitives: [{
+                text: 'ID',
+                value: 'ID'
+            },
+            {
+                text: 'String',
+                value: 'String'
+            },
+            {
+                text: 'Int',
+                value: 'Int'
+            },
+            {
+                text: 'Float',
+                value: 'Float'
+            },
+            {
+                text: 'Boolean',
+                value: 'Boolean'
+            }]
+        });
+        this.setState({loading: false});
+        this.props.closeEditSchema();
     };
 
     render() {
@@ -616,6 +648,9 @@ class EditSchema extends Component {
 
                       <Modal.Content>
                           <Tab panes = {panes} renderActiveOnly={false} />
+                          <Dimmer active = { this.state.loading } >
+                              <Loader content = 'Loading' />
+                          </Dimmer>
                       </Modal.Content>
 
                       <Modal.Actions>
