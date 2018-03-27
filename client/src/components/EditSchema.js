@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 
 import { Modal, Button, Icon, Table, Dropdown, Checkbox, Divider, Tab, Input } from 'semantic-ui-react';
 
+import db from './utils/db';
+import utils from './utils/utils';
+
 class EditSchema extends Component {
     state = {
         databaseName: 'dbName',
@@ -208,6 +211,68 @@ class EditSchema extends Component {
 
     handleChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
+    };
+
+    editSchema = async () => {
+        let schema = {
+            Query: {}
+        };
+
+        const { collections } = this.state;
+        const { customObjects } = this.state;
+
+        for (let collectionIndex = 0 ; collectionIndex < collections.length ; collectionIndex ++) {
+            const collection = collections[collectionIndex];
+
+            // Ignore collections without a name
+            if (collection.name !== '') {
+                let collectionSchema = {};
+                for (let fieldIndex = 0 ; fieldIndex < collection.fields.length ; fieldIndex ++) {
+                    const field = collection.fields[fieldIndex];
+
+                    // Ignore fields without a name or type
+                    if (field.name !== '' && field.type !== '') {
+                        if (field.array === true) {
+                            collectionSchema[field.name] = '[' + field.type + ']';
+                        }
+                        else {
+                            collectionSchema[field.name] = field.type;
+                        }
+                    }
+                }
+
+                schema.Query[collection.name] = '[' + collection.name + '_Documents' + ']';
+                schema[collection.name + '_Documents'] = collectionSchema;
+            }
+        }
+
+        for (let customObjectIndex = 0 ; customObjectIndex < customObjects.length ; customObjectIndex ++) {
+            const customObject = customObjects[customObjectIndex];
+
+            // Ignore objects without a name
+            if (customObject.name !== '') {
+                let customObjectSchema = {};
+                for (let fieldIndex = 0 ; fieldIndex < customObject.fields.length ; fieldIndex ++) {
+                    const field = customObject.fields[fieldIndex];
+
+                    // Ignore fields without a name or type
+                    if (field.name !== '' && field.type !== '') {
+                        if (field.array === true) {
+                            customObjectSchema[field.name] = '[' + field.type + ']';
+                        }
+                        else {
+                            customObjectSchema[field.name] = field.type;
+                        }
+                    }
+                }
+
+                schema[customObject.name] = customObjectSchema;
+            }
+        }
+
+        const schemaJSON = JSON.stringify({
+            schema: schema
+        });
     };
 
     render() {
