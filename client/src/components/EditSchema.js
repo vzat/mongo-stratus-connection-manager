@@ -273,6 +273,10 @@ class EditSchema extends Component {
         const schemaJSON = JSON.stringify({
             schema: schema
         });
+
+        const res = await db.editSchema(this.props.username, this.props.instance, this.props.database);
+
+        console.log(res);
     };
 
     render() {

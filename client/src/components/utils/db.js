@@ -100,18 +100,18 @@ const db = {
 
         return await res.json();
     },
-    // editSchema: async (username, instance, database, schema) => {
-    //     const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/' + database + '/schema', {
-    //         method: 'POST',
-    //         credentials: 'include',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: schema
-    //     });
-    //
-    //     return await res.json();
-    // }
+    editSchema: async (username, instance, database, schema) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/' + database + '/schema', {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: schema
+        });
+
+        return await res.json();
+    }
 };
 
 export default db;

@@ -245,6 +245,31 @@ routes.delete('/:username/:instance/:database/delete', async (req, res) => {
     }
 });
 
+routes.put('/:username/:instance/:database/schema', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const database = req.params.database;
+        const schema = req.body.schema;
+        const token = req.session.token;
+
+        const success = await db.editSchema(username, instance, database, token, schema);
+
+        if (success) {
+            res.end(JSON.stringify({'ok': 1}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'error': err}));
+    }
+});
+
 routes.delete('/:username/:instance', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
