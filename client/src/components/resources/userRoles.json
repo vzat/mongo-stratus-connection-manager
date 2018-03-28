@@ -1,0 +1,66 @@
+[
+    {
+        "text": "read",
+        "value": "read"
+    },
+    {
+        "text": "readWrite",
+        "value": "readWrite"
+    },
+    {
+        "text": "dbAdmin",
+        "value": "dbAdmin"
+    },
+    {
+        "text": "dbOwner",
+        "value": "dbOwner"
+    },
+    {
+        "text": "userAdmin",
+        "value": "userAdmin"
+    },
+    {
+        "text": "clusterAdmin",
+        "value": "clusterAdmin"
+    },
+    {
+        "text": "clusterManager",
+        "value": "clusterManager"
+    },
+    {
+        "text": "clusterMonitor",
+        "value": "clusterMonitor"
+    },
+    {
+        "text": "hostManager",
+        "value": "hostManager"
+    },
+    {
+        "text": "backup",
+        "value": "backup"
+    },
+    {
+        "text": "restore",
+        "value": "restore"
+    },
+    {
+        "text": "readAnyDatabase",
+        "value": "readAnyDatabase"
+    },
+    {
+        "text": "readWriteAnyDatabase",
+        "value": "readWriteAnyDatabase"
+    },
+    {
+        "text": "userAdminAnyDatabase",
+        "value": "userAdminAnyDatabase"
+    },
+    {
+        "text": "dbAdminAnyDatabase",
+        "value": "dbAdminAnyDatabase"
+    },
+    {
+        "text": "root",
+        "value": "root"
+    }
+]
