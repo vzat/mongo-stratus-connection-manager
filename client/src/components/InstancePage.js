@@ -6,6 +6,7 @@ import Header from './Header';
 import InstanceMenu from './InstanceMenu';
 import InstanceOverview from './InstanceOverview';
 import DatabaseList from './DatabaseList';
+import UserList from './UserList';
 import Settings from './Settings';
 
 import db from './utils/db';
@@ -127,6 +128,13 @@ class InstancePage extends Component {
                 {
                     this.state.currentPage === 'databases' &&
                     <DatabaseList
+                        username = {this.props.username}
+                        instance = {this.state.instanceInfo.instanceName}
+                    />
+                }
+                {
+                    this.state.currentPage === 'users' &&
+                    <UserList
                         username = {this.props.username}
                         instance = {this.state.instanceInfo.instanceName}
                     />

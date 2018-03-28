@@ -45,6 +45,17 @@ const db = {
 
         return await res.json();
     },
+    getUsers: async (username, instance) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/users', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
+    },
     createDatabase: async (username, instance, database) => {
         const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/' + database + '/create', {
             method: 'POST',

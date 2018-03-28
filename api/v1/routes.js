@@ -197,6 +197,32 @@ routes.get('/:username/:instance/databases', async (req, res) => {
     }
 });
 
+routes.get('/:username/:instance/users', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const token = req.session.token;
+
+        const users = await db.getUsers(username, instance, token);
+
+        if (users) {
+            res.end(JSON.stringify({
+                'ok': 1,
+                'data': users
+            }));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.post('/:username/:instance/:database/create', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
