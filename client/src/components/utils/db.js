@@ -67,6 +67,29 @@ const db = {
 
         return await res.json();
     },
+    addUser: async (username, instance, data) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/' + '/user', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+    },
+    removeUser: async (username, instance, user) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/' + user + '/user', {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
+    },
     deleteDatabase: async (username, instance, database) => {
         const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/' + database + '/delete', {
             method: 'DELETE',

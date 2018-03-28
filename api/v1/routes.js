@@ -341,6 +341,54 @@ routes.delete('/:username/:instance', async (req, res) => {
     }
 });
 
+routes.post('/:username/:instance/user', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const data = req.body.data;
+        const token = req.session.token;
+
+        const success = await db.addUser(username, instance, token, data);
+
+        if (success) {
+            res.end(JSON.stringify({'ok': 1}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
+routes.delete('/:username/:instance/:user/user', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const user = req.params.user;
+        const token = req.session.token;
+
+        const success = await db.removeUser(username, instance, user, token);
+
+        if (success) {
+            res.end(JSON.stringify({'ok': 1}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
