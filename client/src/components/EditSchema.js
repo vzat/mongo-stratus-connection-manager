@@ -86,6 +86,7 @@ class EditSchema extends Component {
                 if (collectionsList.indexOf(object) !== -1) {
                     if (item.name.lastIndexOf('_Documents') !== -1) {
                         item.name = item.name.substring(0, item.name.indexOf('_Documents'));
+                        item.name = item.name.toLowerCase();
                     }
 
                     // Add to collections
@@ -322,17 +323,18 @@ class EditSchema extends Component {
 
                     // Ignore fields without a name or type
                     if (field.name !== '' && field.type !== '') {
+                        const fieldType = utils.toProperCase(field.type);
                         if (field.array === true) {
-                            collectionSchema[field.name] = '[' + field.type + ']';
+                            collectionSchema[field.name] = '[' + fieldType + ']';
                         }
                         else {
-                            collectionSchema[field.name] = field.type;
+                            collectionSchema[field.name] = fieldType;
                         }
                     }
                 }
 
                 let collectionName = utils.toProperCase(collection.name);
-                schema.Query[collection.name] = '[' + collectionName + '_Documents' + ']';
+                schema.Query[collectionName.toLowerCase()] = '[' + collectionName + '_Documents' + ']';
                 schema[collectionName + '_Documents'] = collectionSchema;
             }
         }
@@ -348,11 +350,12 @@ class EditSchema extends Component {
 
                     // Ignore fields without a name or type
                     if (field.name !== '' && field.type !== '') {
+                        const fieldType = utils.toProperCase(field.type);
                         if (field.array === true) {
-                            customObjectSchema[field.name] = '[' + field.type + ']';
+                            customObjectSchema[field.name] = '[' + fieldType + ']';
                         }
                         else {
-                            customObjectSchema[field.name] = field.type;
+                            customObjectSchema[field.name] = fieldType;
                         }
                     }
                 }
