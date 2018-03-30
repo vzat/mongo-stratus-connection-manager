@@ -389,6 +389,32 @@ routes.delete('/:username/:instance/:user/user', async (req, res) => {
     }
 });
 
+routes.get('/:username/:instance/backups', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const token = req.session.token;
+
+        const dbs = await db.getBackups(username, instance, token);
+
+        if (dbs) {
+            res.end(JSON.stringify({
+                'ok': 1,
+                'data': dbs
+            }));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 

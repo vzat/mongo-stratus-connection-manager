@@ -7,6 +7,7 @@ import InstanceMenu from './InstanceMenu';
 import InstanceOverview from './InstanceOverview';
 import DatabaseList from './DatabaseList';
 import UserList from './UserList';
+import Backup from './Backup';
 import Settings from './Settings';
 
 import db from './utils/db';
@@ -135,6 +136,13 @@ class InstancePage extends Component {
                 {
                     this.state.currentPage === 'users' &&
                     <UserList
+                        username = {this.props.username}
+                        instance = {this.state.instanceInfo.instanceName}
+                    />
+                }
+                {
+                    this.state.currentPage === 'backup' &&
+                    <Backup
                         username = {this.props.username}
                         instance = {this.state.instanceInfo.instanceName}
                     />
