@@ -189,6 +189,29 @@ const db = {
         });
 
         return await res.json();
+    },
+    getScheduledBackup: async (username, instance) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/scheduled/backup', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
+    },
+    setScheduledBackup: async (username, instance, time) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/schedule/backup/', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: time
+        });
+
+        return await res.json();
     }
 };
 

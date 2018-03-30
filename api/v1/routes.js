@@ -460,6 +460,54 @@ routes.post('/:username/:instance/restore/:timestamp', async (req, res) => {
     }
 });
 
+routes.get('/:username/:instance/scheduled/backup', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+
+        const data = await db.getScheduledBackup(username, instance);
+
+        if (data) {
+            res.end(JSON.stringify({
+                'ok': 1,
+                'data': data
+            }));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
+routes.post('/:username/:instance/schedule/backup', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const time = req.body.time;
+
+        const suceess = await db.setScheduledBackup(username, instance, time);
+
+        if (suceess) {
+            res.end(JSON.stringify({'ok': 1}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
