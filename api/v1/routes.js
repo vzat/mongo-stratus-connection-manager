@@ -415,6 +415,51 @@ routes.get('/:username/:instance/backups', async (req, res) => {
     }
 });
 
+routes.post('/:username/:instance/backup', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const token = req.session.token;
+
+        req.session.backupComplete = false;
+
+        res.end(JSON.stringify({'ok': 1}));
+
+        await db.backup(username, instance, token);
+
+        req.session.backupComplete = true;
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
+routes.post('/:username/:instance/restore/:timestamp', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const timestamp = req.params.timestamp;
+        const token = req.session.token;
+
+        req.session.restoreComplete = false;
+
+        res.end(JSON.stringify({'ok': 1}));
+
+        await db.restore(username, instance, timestamp, token);
+
+        req.session.restoreComplete = true;
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 

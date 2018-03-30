@@ -167,6 +167,28 @@ const db = {
         });
 
         return await res.json();
+    },
+    backup: async (username, instance) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/backup', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
+    },
+    restore: async (username, instance, timestamp) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/restore/' + timestamp, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
     }
 };
 

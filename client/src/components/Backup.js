@@ -2,13 +2,23 @@ import React, { Component } from 'react';
 
 import './css/Backup.css';
 
-import { Container, Table, Button, Icon } from 'semantic-ui-react';
+import { Container, Table, Button, Icon, Confirm } from 'semantic-ui-react';
 
 import db from './utils/db';
 
 class Backup extends Component {
     state = {
-        backups: []
+        backups: [],
+        timestamp: '',
+        confirmRestore: false
+    };
+
+    openModal = (name) => {
+        this.setState({[name]: true});
+    };
+
+    closeModal = (name) => {
+        this.setState({[name]: false});
     };
 
     getBackups = async (username, instance) => {
@@ -18,6 +28,26 @@ class Backup extends Component {
             const backups = res.data;
 
             this.setState({backups: backups});
+        }
+    };
+
+    backup = async () => {
+        if (this.props.username && this.props.instance) {
+            await db.backup(this.props.username, this.props.instance);
+        }
+    };
+
+    confirmRestore = (event, comp) => {
+        if (this.props.username && this.props.instance && comp.id >= 0 && comp.id < this.state.backups.length) {
+            this.setState({timestamp: this.state.backups[comp.id].timestamp});
+            this.openModal('confirmRestore');
+        }
+    };
+
+    restore = async () => {
+        if (this.props.username && this.props.instance && this.state.timestamp !== '') {
+            await db.restore(this.props.username, this.props.instance, this.state.timestamp);
+            this.closeModal('confirmRestore');
         }
     };
 
@@ -70,7 +100,12 @@ class Backup extends Component {
                     { this.timestampToTime(backup.timestamp) }
                 </Table.Cell>
                 <Table.Cell collapsing>
-                    <Button icon = 'upload' color = 'green' />
+                    <Button
+                        id = {index}
+                        icon = 'upload'
+                        color = 'green'
+                        size = 'mini'
+                        onClick = {this.confirmRestore} />
                 </Table.Cell>
             </Table.Row>
         ));
@@ -82,9 +117,7 @@ class Backup extends Component {
                       <Table singleLine unstackable selectable>
                           <Table.Header>
                               <Table.Row>
-                                  <Table.HeaderCell>
-                                      Backup Number
-                                  </Table.HeaderCell>
+                                  <Table.HeaderCell/>
                                   <Table.HeaderCell>
                                       Backup Time
                                   </Table.HeaderCell>
@@ -99,9 +132,12 @@ class Backup extends Component {
                           <Table.Footer>
                               <Table.Row>
                                   <Table.HeaderCell colSpan = '3' >
-                                      <Button icon color = 'green' labelPosition = 'left' >
-                                          <Icon name = 'download' />
-                                          Create Backup
+                                      <Button icon
+                                          color = 'green'
+                                          labelPosition = 'left'
+                                          onClick = { () => this.backup() } >
+                                              <Icon name = 'download' />
+                                              Backup
                                       </Button>
                                   </Table.HeaderCell>
                               </Table.Row>
@@ -113,6 +149,27 @@ class Backup extends Component {
                           No Backups
                       </div>
                   }
+                  <Confirm
+                      open = {this.state.confirmRestore}
+                      onCancel = {() => this.closeModal('confirmRestore')}
+                      onConfirm = {() => this.restore()}
+                      header = 'Are you sure you want to restore the database to this state?'
+                      content = 'All data will be replaced. You cannot undo this action.'
+                      confirmButton = {
+                          <Button icon
+                              labelPosition = 'left'
+                              primary = {false}
+                              color = 'green'>
+                                  <Icon name = 'upload' />
+                                  Restore
+                          </Button>
+                      }
+                      size = 'fullscreen'
+                      style = {{
+                          marginTop: '40vh',
+                          maxWidth: 800
+                      }}
+                  />
               </Container>
           </div>
         );
