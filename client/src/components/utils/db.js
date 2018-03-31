@@ -212,6 +212,28 @@ const db = {
         });
 
         return await res.json();
+    },
+    getToken: async (username) => {
+        const res = await fetch('/api/v1/internal/' + username + '/token', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
+    },
+    refreshToken: async (username) => {
+        const res = await fetch('/api/v1/internal/' + username + '/token', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
     }
 };
 

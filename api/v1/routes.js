@@ -508,6 +508,51 @@ routes.post('/:username/:instance/schedule/backup', async (req, res) => {
     }
 });
 
+routes.get('/:username/token', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+
+        const token = await db.getToken(username);
+
+        if (token) {
+            req.session.token = token;
+            res.end(JSON.stringify({'ok': 1, 'data': token}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
+routes.post('/:username/token', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const oldToken = req.session.token;
+
+        const token = await db.refreshToken(username, oldToken);
+
+        if (token) {
+            req.session.token = token;
+            res.end(JSON.stringify({'ok': 1, 'data': token}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
