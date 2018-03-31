@@ -5,6 +5,7 @@ import './css/InstanceOverview.css';
 import { Grid, Statistic, Divider } from 'semantic-ui-react';
 
 import InstanceOverviewSingleNode from './InstanceOverviewSingleNode';
+import InstanceOverviewReplicaSet from './InstanceOverviewReplicaSet';
 
 class InstanceOverview extends Component {
     render() {
@@ -42,6 +43,14 @@ class InstanceOverview extends Component {
             {
                 instanceInfo.type === 'Single Node' &&
                 <InstanceOverviewSingleNode
+                    username = {this.props.username}
+                    instanceInfo = {this.props.instanceInfo}
+                />
+            }
+
+            {
+                instanceInfo.type === 'Replica Set' &&
+                <InstanceOverviewReplicaSet
                     username = {this.props.username}
                     instanceInfo = {this.props.instanceInfo}
                 />

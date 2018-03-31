@@ -21,7 +21,7 @@ class InstanceMenu extends Component {
         return (
           <div className="InstanceMenu">
 
-                <Menu secondary pointing stackable color = 'green' className = 'nav-menu'>
+                <Menu secondary pointing stackable color = 'green' className = 'nav-menu' widths = '5'>
                     <Menu.Item name = 'overview' active = {this.state.menuActive === 'overview'} onClick = {this.handleMenuClick}>
                         <Icon name = 'browser' />
                         Overview

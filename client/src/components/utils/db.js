@@ -234,6 +234,17 @@ const db = {
         });
 
         return await res.json();
+    },
+    getReplicaSetStatus: async (username, instance) => {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/replicaset/status', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await res.json();
     }
 };
 

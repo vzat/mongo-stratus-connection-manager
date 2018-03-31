@@ -553,6 +553,29 @@ routes.post('/:username/token', async (req, res) => {
     }
 });
 
+routes.get('/:username/:instance/replicaset/status', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        const username = req.params.username;
+        const instance = req.params.instance;
+        const token = req.session.token;
+
+        const status = await db.getReplicaSetStatus(username, instance, token);
+
+        if (status) {
+            res.end(JSON.stringify({'ok': 1, 'data': status}));
+        }
+        else {
+            res.end(JSON.stringify({'ok': 0}));
+        }
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'ok': 0, 'error': err}));
+    }
+});
+
 routes.post('/create/singlenode/db', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
@@ -658,6 +681,10 @@ routes.post('/create/replicaset/db', async (req, res) => {
             serverInfo.regions.length !== serverInfo.machineTypes.length)
             throw new Error('Invalid Replica Set Data');
 
+        // Store instance in cookies
+        req.session.creatingInstance = true;
+        req.session.instanceName = serverData.serverName;
+
         if (serverInfo.cloudPlatform === 'gcp') {
             gcp.createReplicaSetDB(username, serverInfo.regions, serverInfo.machineTypes, Number(serverInfo.diskSize), serverData);
             res.end(JSON.stringify({'ok': 1}));
@@ -730,6 +757,10 @@ routes.post('/create/shardedcluster/db', async (req, res) => {
             !serverData.rootPass ||
             !serverData.mongoVersion)
             throw new Error('Invalid Server Data');
+
+        // Store instance in cookies
+        req.session.creatingInstance = true;
+        req.session.instanceName = serverData.serverName;
 
         if (serverInfo.cloudPlatform === 'gcp') {
             gcp.createShardedClusterDB(username, serverInfo.regions, serverInfo.machineTypes, serverInfo.diskSizes, serverData);

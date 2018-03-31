@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/Settings.css'
 
-import { Button, Confirm, Icon, Header, Divider, Input, Popup } from 'semantic-ui-react';
+import { Button, Confirm, Icon, Header, Divider, Input, Popup, Container } from 'semantic-ui-react';
 
 import db from './utils/db';
 
@@ -81,9 +81,10 @@ class Settings extends Component {
     render() {
         return (
           <div className="Settings">
+              <Container>
               <Header dividing> API </Header>
 
-              <Input id = 'token' value = {this.state.token} label = 'Token' attached = 'left' onClick = {this.selectToken} style = {{width: '340px'}} />
+              <Input id = 'token' value = {this.state.token} label = 'Token' attached = 'left' onClick = {this.selectToken} style = {{width: '350px'}} readOnly />
               <Popup inverted trigger = { <Button icon = 'copy' attached = 'right' onClick = {this.copyToken} /> } >
                   { this.state.tokenCopied === true &&
                     <div> Copied to Clipboard </div>
@@ -119,6 +120,7 @@ class Settings extends Component {
                       maxWidth: 800
                   }}
               />
+              </Container>
           </div>
         );
     }
