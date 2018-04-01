@@ -23,6 +23,18 @@ const db = {
 
         return await res.json();
     },
+    createShardedCluster: async (data) => {
+        const res = await fetch('/api/v1/internal/create/shardedcluster/db', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+    },
     getInstances: async (username) => {
         const res = await fetch('/api/v1/internal/' + username + '/instances', {
             method: 'GET',

@@ -6,6 +6,7 @@ import { Grid, Statistic, Divider } from 'semantic-ui-react';
 
 import InstanceOverviewSingleNode from './InstanceOverviewSingleNode';
 import InstanceOverviewReplicaSet from './InstanceOverviewReplicaSet';
+import InstanceOverviewShardedCluster from './InstanceOverviewShardedCluster';
 
 class InstanceOverview extends Component {
     render() {
@@ -51,6 +52,14 @@ class InstanceOverview extends Component {
             {
                 instanceInfo.type === 'Replica Set' &&
                 <InstanceOverviewReplicaSet
+                    username = {this.props.username}
+                    instanceInfo = {this.props.instanceInfo}
+                />
+            }
+
+            {
+                instanceInfo.type === 'Sharded Cluster' &&
+                <InstanceOverviewShardedCluster
                     username = {this.props.username}
                     instanceInfo = {this.props.instanceInfo}
                 />

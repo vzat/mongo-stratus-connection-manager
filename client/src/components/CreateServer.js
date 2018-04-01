@@ -336,6 +336,8 @@ class CreateServer extends Component {
                 return this.createSingleNode();
             case 'replicaSet':
                 return this.createReplicaSet();
+            case 'shardedCluster':
+                return this.createShardedCluster();
             default:
                 this.setState({ loading: false });
                 break;
@@ -402,9 +404,120 @@ class CreateServer extends Component {
                 replicaSetName: this.state.serverName
             }
         };
-        console.log(data);
         const json = await JSON.stringify(data);
         const res = await db.createReplicaSet(json);
+
+        if (res.ok && res.ok === 1) {
+            this.props.setCreatingDB(true);
+            this.props.setModalState(false);
+            this.setState({ loading: false });
+        }
+        else {
+            this.setState({ loading: false });
+        }
+    };
+
+    createShardedCluster = async () => {
+        const { shardedCluster } = this.state;
+
+        let regions = {
+            configServers: [],
+            shards: {},
+            mongos: []
+        };
+        let machineTypes = {
+            configServers: [],
+            shards: {},
+            mongos: []
+        };
+        let diskSizes = {
+            configServers: [],
+            shards: {},
+            mongos: []
+        };
+        let ports = {
+            configServers: [],
+            shards: {},
+            mongos: []
+        };
+
+        // Config
+        const { config } = shardedCluster;
+        const configServers = config.servers;
+        let configRegions = [];
+        let configMachineTypes = [];
+        let configPorts = [];
+        for (const serverNo in configServers) {
+            const server = configServers[serverNo];
+            configRegions.push(server.region);
+            configMachineTypes.push(server.machineType);
+            configPorts.push(27017);
+        }
+        regions.configServers = configRegions;
+        machineTypes.configServers = configMachineTypes;
+        diskSizes.configServers = config.diskSize;
+        ports.configServers = configPorts;
+
+        // Shards
+        const replicas = shardedCluster.replicas;
+        for (const replicaNo in replicas) {
+            const replica = replicas[replicaNo];
+            const servers = replica.servers;
+
+            let replicaRegions = [];
+            let replicaMachineTypes = [];
+            let replicaPorts = [];
+            for (const serverNo in servers) {
+                const server = servers[serverNo];
+                replicaRegions.push(server.region);
+                replicaMachineTypes.push(server.machineType);
+                replicaPorts.push(27017);
+            }
+
+            const shardString = 'shard' + (parseInt(replicaNo) + 1);
+            regions.shards[shardString] = replicaRegions;
+            machineTypes.shards[shardString] = replicaMachineTypes;
+            diskSizes.shards[shardString] = replica.diskSize;
+            ports.shards[shardString] = replicaPorts;
+        }
+
+        // Router
+        const { router } = shardedCluster;
+        const routerServers = router.servers;
+        let routerRegions = [];
+        let routerMachineTypes = [];
+        let routerPorts = [];
+        for (const serverNo in routerServers) {
+            const server = routerServers[serverNo];
+            routerRegions.push(server.region);
+            routerMachineTypes.push(server.machineType);
+            routerPorts.push(27017);
+        }
+        regions.mongos = routerRegions;
+        machineTypes.mongos = routerMachineTypes;
+        diskSizes.mongos = router.diskSize;
+        ports.mongos = routerPorts;
+
+        const data = {
+            username: this.props.username,
+            serverInfo: {
+                cloudPlatform: this.state.platform,
+                regions: regions,
+                machineTypes: machineTypes,
+                diskSizes: diskSizes
+            },
+            serverData: {
+                serverName: this.state.serverName,
+                serverPorts: ports,
+                rootUser: this.state.rootUser,
+                rootPass: this.state.rootPass,
+                mongoVersion: this.state.mongoVersion
+            }
+        };
+
+        // Send Data
+        const json = await JSON.stringify(data);
+        const res = await db.createShardedCluster(json);
 
         if (res.ok && res.ok === 1) {
             this.props.setCreatingDB(true);

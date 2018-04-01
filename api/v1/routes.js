@@ -772,6 +772,7 @@ routes.post('/create/shardedcluster/db', async (req, res) => {
     }
     catch (err) {
         logger.log('error', err);
+        req.session.creatingInstance = false;
         res.end(JSON.stringify({'ok': 0, 'error': err}));
     }
 });
