@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Table, Icon, Flag, Popup } from 'semantic-ui-react';
+import { Table, Icon, Flag, Popup, Grid, Header } from 'semantic-ui-react';
 
 import db from './utils/db';
 
@@ -9,10 +9,7 @@ import gcpMachineTypes from './resources/gcpMachineTypes.json';
 
 class InstanceOverviewShardedCluster extends Component {
     state = {
-        config: [],
-        shards: [],
-        router: [],
-        servers: [{
+        config: [{
             running: true,
             primary: true,
             name: '_________.mongostratus.me:27017',
@@ -22,19 +19,21 @@ class InstanceOverviewShardedCluster extends Component {
             region: '_____',
             flag: 'us',
             ip: 'x.x.x.x'
+        }],
+        shards: {
+            shard1: [{
+                running: true,
+                primary: true,
+                name: '_________.mongostratus.me:27017',
+                vcpu: 'x',
+                ram: 'x',
+                disk: 'x',
+                region: '_____',
+                flag: 'us',
+                ip: 'x.x.x.x'
+            }]
         },
-        {
-            running: true,
-            primary: true,
-            name: '_________.mongostratus.me:27017',
-            vcpu: 'x',
-            ram: 'x',
-            disk: 'x',
-            region: '_____',
-            flag: 'us',
-            ip: 'x.x.x.x'
-        },
-        {
+        router: [{
             running: true,
             primary: true,
             name: '_________.mongostratus.me:27017',
@@ -69,28 +68,34 @@ class InstanceOverviewShardedCluster extends Component {
         // res.data.running
 
         if (res.ok && res.ok === 1) {
+              let { state } = this;
+              state.config = [];
+              state.shards = [];
+              state.router = [];
+
               const data = res.data;
               let servers = [];
 
-              for (const replicaNo in data) {
-                  const replica = data[replicaNo];
+              let regions;
+              let machineTypes;
+
+              if (instanceInfo.platform === 'Google Cloud Platform') {
+                  regions = gcpRegions;
+                  machineTypes = gcpMachineTypes;
+              }
+
+              for (const serverNo in data) {
+                  const server = data[serverNo];
 
                   let regionValue;
                   let flagValue;
                   let vcpu;
                   let ram;
 
-                  let regions;
-                  let machineTypes;
-                  if (instanceInfo.platform === 'Google Cloud Platform') {
-                      regions = gcpRegions;
-                      machineTypes = gcpMachineTypes;
-                  }
-
                   // Get region name and flag
                   for (let regionNo = 0 ; regionNo < regions.length ; regionNo ++) {
                       const region = regions[regionNo];
-                      if (region.value === replica.region) {
+                      if (region.value === server.region) {
                           regionValue = region.text;
                           flagValue = region.flag;
                       }
@@ -99,42 +104,61 @@ class InstanceOverviewShardedCluster extends Component {
                   // Get virtual cpu and memory
                   for (let machineTypeNo = 0 ; machineTypeNo < machineTypes.length ; machineTypeNo ++) {
                       const machineType = machineTypes[machineTypeNo];
-                      if (machineType.name === replica.machineType) {
+                      if (machineType.name === server.machineType) {
                           vcpu = machineType.vcpu;
                           ram = machineType.ram;
                       }
                   }
 
-                  const routerState = {
-                      running: replica.running,
-                      name: username + '-' + instanceInfo.instanceName + '-mongos-' + replicaNo + '.mongostratus.me:27017',
+                  const serverDetails = {
+                      running: server.running,
+                      name: server.name + ':27017',
                       vcpu: vcpu,
                       ram: ram,
-                      disk: replica.diskSize,
+                      disk: server.diskSize,
                       region: regionValue,
                       flag: flagValue,
-                      ip: replica.ip
+                      ip: server.ip
                   }
 
-                  servers.push(routerState);
-              }
+                  const comp = server.name.split('-');
+                  if (comp.length > 2) {
+                      const type = comp[comp.length - 2];
 
-              this.setState({servers});
+                      // Config Replica
+                      if (type.includes('config')) {
+                          state.config.push(serverDetails);
+                      }
+
+                      // Shards
+                      if (type.includes('shard')) {
+                          if (state.shards[type] === undefined) {
+                              state.shards[type] = [];
+                          }
+                          state.shards[type].push(serverDetails);
+                      }
+
+                      // Mongos
+                      if (type.includes('mongos')) {
+                          state.router.push(serverDetails);
+                      }
+                  }
+              }
+              this.setState(state);
         }
 
     };
 
     render() {
-        const { servers } = this.state;
-        const replica = this.state.servers[0];
-        const table = (
+        const { router } = this.state;
+        const routerTable = (
             <div className = 'server-table'>
                 <Table celled singleLine collapsing unstackable className = 'server-table'>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan = '2'>
                                 {
-                                    replica.running &&
+                                    router[0].running &&
                                     <Popup inverted
                                         trigger = { <Icon name = 'check circle' color = 'green' /> }
                                         content = 'This server is running'
@@ -142,23 +166,31 @@ class InstanceOverviewShardedCluster extends Component {
 
                                 }
                                 {
-                                    !replica.running &&
+                                    !router[0].running &&
                                     <Popup inverted
                                         trigger = { <Icon name = 'exclamation circle' color = 'red'/> }
                                         content = 'This server cannot be reached'
                                         position = 'left center' />
                                 }
-                               { replica.name }
+                               { router[0].name }
                             </Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell>
+                                Server Type
+                            </Table.Cell>
+                            <Table.Cell>
+                                Router
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
                                 Virtual CPUs
                             </Table.Cell>
                             <Table.Cell>
-                                { replica.vcpu }
+                                { router[0].vcpu }
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
@@ -166,7 +198,7 @@ class InstanceOverviewShardedCluster extends Component {
                                 Memory (GB)
                             </Table.Cell>
                             <Table.Cell>
-                                { replica.ram }
+                                { router[0].ram }
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
@@ -174,7 +206,7 @@ class InstanceOverviewShardedCluster extends Component {
                                 Disk Space (GB)
                             </Table.Cell>
                             <Table.Cell>
-                                { replica.disk }
+                                { router[0].disk }
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
@@ -182,7 +214,7 @@ class InstanceOverviewShardedCluster extends Component {
                                 Region
                             </Table.Cell>
                             <Table.Cell>
-                                <Flag name = { replica.flag } /> { replica.region }
+                                <Flag name = { router[0].flag } /> { router[0].region }
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
@@ -190,7 +222,7 @@ class InstanceOverviewShardedCluster extends Component {
                                 IP Address
                             </Table.Cell>
                             <Table.Cell>
-                                { replica.ip }
+                                { router[0].ip }
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
@@ -198,10 +230,206 @@ class InstanceOverviewShardedCluster extends Component {
             </div>
         );
 
+        const { config } = this.state;
+        const configTables = config.map((server, index) => (
+            <div className = 'server-table'>
+                <Table celled singleLine collapsing unstackable className = 'server-table'>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell colSpan = '2'>
+                                {
+                                    server.running &&
+                                    <Popup inverted
+                                        trigger = { <Icon name = 'check circle' color = 'green' /> }
+                                        content = 'This server is running'
+                                        position = 'left center' />
+
+                                }
+                                {
+                                    !server.running &&
+                                    <Popup inverted
+                                        trigger = { <Icon name = 'exclamation circle' color = 'red'/> }
+                                        content = 'This server cannot be reached'
+                                        position = 'left center' />
+                                }
+                               { server.name }
+                            </Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell>
+                                Server Type
+                            </Table.Cell>
+                            <Table.Cell>
+                                Config
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                Virtual CPUs
+                            </Table.Cell>
+                            <Table.Cell>
+                                { server.vcpu }
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                Memory (GB)
+                            </Table.Cell>
+                            <Table.Cell>
+                                { server.ram }
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                Disk Space (GB)
+                            </Table.Cell>
+                            <Table.Cell>
+                                { server.disk }
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                Region
+                            </Table.Cell>
+                            <Table.Cell>
+                                <Flag name = { server.flag } /> { server.region }
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                IP Address
+                            </Table.Cell>
+                            <Table.Cell>
+                                { server.ip }
+                            </Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+                </Table>
+            </div>
+        ));
+
+        const { shards } = this.state;
+        const shardsTables = Object.keys(shards).map((shard, shardIndex) => (
+            <Grid.Row className = 'sharded-cluster-component' style = {{ borderColor: "LightGreen"}}>
+                <Grid.Column>
+                    <div className='servers'>
+                    {
+                        shards[shard].map((server, serverIndex) => (
+                            <div className = 'server-table'>
+                                <Table celled singleLine collapsing unstackable className = 'server-table'>
+                                    <Table.Header>
+                                        <Table.Row>
+                                            <Table.HeaderCell colSpan = '2'>
+                                                {
+                                                    server.running &&
+                                                    <Popup inverted
+                                                        trigger = { <Icon name = 'check circle' color = 'green' /> }
+                                                        content = 'This server is running'
+                                                        position = 'left center' />
+
+                                                }
+                                                {
+                                                    !server.running &&
+                                                    <Popup inverted
+                                                        trigger = { <Icon name = 'exclamation circle' color = 'red'/> }
+                                                        content = 'This server cannot be reached'
+                                                        position = 'left center' />
+                                                }
+                                               { server.name }
+                                            </Table.HeaderCell>
+                                        </Table.Row>
+                                    </Table.Header>
+                                    <Table.Body>
+                                        <Table.Row>
+                                            <Table.Cell>
+                                                Server Type
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                Shard
+                                            </Table.Cell>
+                                        </Table.Row>
+                                        <Table.Row>
+                                            <Table.Cell>
+                                                Shard Name
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                { shard }
+                                            </Table.Cell>
+                                        </Table.Row>
+                                        <Table.Row>
+                                            <Table.Cell>
+                                                Virtual CPUs
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                { server.vcpu }
+                                            </Table.Cell>
+                                        </Table.Row>
+                                        <Table.Row>
+                                            <Table.Cell>
+                                                Memory (GB)
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                { server.ram }
+                                            </Table.Cell>
+                                        </Table.Row>
+                                        <Table.Row>
+                                            <Table.Cell>
+                                                Disk Space (GB)
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                { server.disk }
+                                            </Table.Cell>
+                                        </Table.Row>
+                                        <Table.Row>
+                                            <Table.Cell>
+                                                Region
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                <Flag name = { server.flag } /> { server.region }
+                                            </Table.Cell>
+                                        </Table.Row>
+                                        <Table.Row>
+                                            <Table.Cell>
+                                                IP Address
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                { server.ip }
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    </Table.Body>
+                                </Table>
+                            </div>
+                        ))
+                    }
+                    </div>
+                </Grid.Column>
+            </Grid.Row>
+
+
+        ));
+
         return (
-          <div className='servers'>
-              { table }
-          </div>
+            <Grid>
+                <Grid.Row className = 'sharded-cluster-component' style = {{ borderColor: 'LightBlue' }}>
+                    <Grid.Column>
+                        <div className='servers'>
+                            { routerTable }
+                        </div>
+                    </Grid.Column>
+                </Grid.Row>
+
+                <Grid.Row className = 'sharded-cluster-component' style = {{ borderColor: 'Khaki'}}>
+                    <Grid.Column>
+                        <div className='servers'>
+                            { configTables }
+                        </div>
+                    </Grid.Column>
+                </Grid.Row>
+
+                { shardsTables }
+            </Grid>
         );
     }
 }
