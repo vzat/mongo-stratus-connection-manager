@@ -159,10 +159,12 @@ class DatabaseList extends Component {
         const databases = this.state.databases;
         const items = databases.map((database, index) => (
             <Table.Row>
-                <Table.Cell>
+                <Table.Cell singleLine>
                     <Header as = 'h4'>
                         <Icon name = 'database' />
-                        { database.name }
+                        <Header.Content>
+                            <a href = {'http://localhost:5001/data/' + this.props.instance + '/' +   database.name }> { database.name } </a>
+                        </Header.Content>
                     </Header>
                 </Table.Cell>
                 <Table.Cell>
