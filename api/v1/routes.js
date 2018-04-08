@@ -23,6 +23,20 @@ routes.post('/valid/session', async (req, res) => {
     }
 });
 
+routes.post('/:user/logout', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    try {
+        req.session = null;
+
+        res.end(JSON.stringify({'ok': 1}));
+    }
+    catch (err) {
+        logger.log('error', err);
+        res.end(JSON.stringify({'error': err}));
+    }
+});
+
 routes.get('/get/username', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 

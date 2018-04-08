@@ -16,14 +16,8 @@ module.exports = new Promise((resolve, reject) => {
     app.use(session({
         name: 'session',
         secret: 'MongoStratus'
-        // maxAge: 60000
     }));
     app.use(morgan('combined'));
-
-    // Debug only
-    app.get('/', function (req, res) {
-        res.end('Connection Manager Server');
-    });
 
     app.use('/api/v1/internal', routes);
 

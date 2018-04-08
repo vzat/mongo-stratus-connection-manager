@@ -24,24 +24,6 @@ class ServerList extends Component {
   };
 
   checkDB = async () => {
-      // if (this.props.notification) {
-      //     const username = this.props.username;
-      //     const database = this.props.db;
-      //
-      //     const res = await fetch('/api/v1/internal/exists/' + username + '/' + database, {
-      //         method: 'GET',
-      //         headers: {
-      //             'Content-Type': 'application/json'
-      //         }
-      //     });
-      //
-      //     const json = await res.json();
-      //
-      //     if (json.ok && json.ok === 1) {
-      //         this.props.setCreatingDB(false);
-      //     }
-      // }
-
       const res = await fetch('/api/v1/internal/show/notification', {
           method: 'GET',
           credentials: 'include',
@@ -74,6 +56,21 @@ class ServerList extends Component {
               'Content-Type': 'application/json'
           }
       });
+  };
+
+  logout = async (event, comp) => {
+      if (this.props.username) {
+          const res = await fetch('/api/v1/internal/' + this.props.username + '/logout', {
+              method: 'POST',
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          // Reload the page for the logout to take effect
+          window.location.reload();
+      }
   };
 
   render() {
@@ -123,8 +120,7 @@ class ServerList extends Component {
                     <Icon name = 'user circle' />
                     <Dropdown text = {username} direction = 'left' inline compact>
                         <Dropdown.Menu>
-                            <Dropdown.Item text = 'Account Details' />
-                            <Dropdown.Item text = 'Logout' />
+                            <Dropdown.Item key = 'Logout' text = 'Logout' value = 'Logout' onClick = {this.logout} />
                         </Dropdown.Menu>
                     </Dropdown>
                 </div>
