@@ -1,0 +1,17 @@
+[
+    {
+        "name": "micro",
+        "vcpu": "0.2",
+        "ram": "0.60"
+    },
+    {
+        "name": "small",
+        "vcpu": "0.5",
+        "ram": "1.70"
+    },
+    {
+        "name": "standard",
+        "vcpu": "1",
+        "ram": "3.75"
+    }
+]

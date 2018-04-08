@@ -1,0 +1,32 @@
+[
+    {
+        "text": "Oregon",
+        "value": "us1",
+        "flag": "us"
+    },
+    {
+        "text": "Iowa",
+        "value": "us2",
+        "flag": "us"
+    },
+    {
+        "text": "N. Virginia",
+        "value": "us3",
+        "flag": "us"
+    },
+    {
+        "text": "London",
+        "value": "eu1",
+        "flag": "gb"
+    },
+    {
+        "text": "Eemshaven",
+        "value": "eu2",
+        "flag": "nl"
+    },
+    {
+        "text": "Frankfurt",
+        "value": "eu3",
+        "flag": "de"
+    }
+]

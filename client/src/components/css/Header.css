@@ -1,0 +1,16 @@
+.Header {
+}
+
+.username-dropdown {
+    float: right;
+    margin-top: 5px;
+}
+
+.notification-text {
+    display: inline;
+    padding-left: 10px;
+}
+
+.breadcrumb-nav {
+    padding: 20px;
+}
