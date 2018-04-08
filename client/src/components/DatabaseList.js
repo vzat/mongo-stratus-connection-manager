@@ -163,7 +163,7 @@ class DatabaseList extends Component {
                     <Header as = 'h4'>
                         <Icon name = 'database' />
                         <Header.Content>
-                            <a href = {'http://localhost:5001/data/' + this.props.instance + '/' +   database.name }> { database.name } </a>
+                            <a href = {'/data/' + this.props.instance + '/' +   database.name }> { database.name } </a>
                         </Header.Content>
                     </Header>
                 </Table.Cell>
