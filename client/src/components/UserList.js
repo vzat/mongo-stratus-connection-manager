@@ -314,7 +314,8 @@ class UserList extends Component {
                       </Modal.Content>
                       <Modal.Actions>
                           <Button onClick = {() => this.closeModal('modalAddUser')} > Cancel </Button>
-                          <Button
+                          <Button icon
+                              labelPosition = 'left'
                               color = 'green'
                               disabled = {
                                   this.state.inputUsername === '' ||
@@ -323,6 +324,7 @@ class UserList extends Component {
                                   this.state.createUser.roles.length === 0
                               }
                               onClick = {this.addUser} >
+                                  <Icon name = 'user' />
                                   Add User
                         </Button>
                       </Modal.Actions>

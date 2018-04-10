@@ -113,7 +113,15 @@ class Settings extends Component {
                   onConfirm = {this.deleteInstance}
                   header = 'Are you sure you want to delete this instance?'
                   content = 'All data will be permanently deleted. You cannot undo this action.'
-                  confirmButton = 'Delete Instance'
+                  confirmButton = {
+                      <Button icon
+                          labelPosition = 'left'
+                          primary = {false}
+                          color = 'red'>
+                              <Icon name = 'trash' />
+                              Delete Instance
+                      </Button>
+                  }
                   size = 'fullscreen'
                   style = {{
                       marginTop: '40vh',

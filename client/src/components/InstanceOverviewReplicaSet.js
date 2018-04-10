@@ -12,7 +12,7 @@ class InstanceOverviewReplicaSet extends Component {
         servers: [{
             running: true,
             primary: true,
-            name: '_________.mongostratus.me:27017',
+            name: '_________',
             vcpu: 'x',
             ram: 'x',
             disk: 'x',
@@ -23,7 +23,7 @@ class InstanceOverviewReplicaSet extends Component {
         {
             running: true,
             primary: true,
-            name: '_________.mongostratus.me:27017',
+            name: '_________',
             vcpu: 'x',
             ram: 'x',
             disk: 'x',
@@ -34,7 +34,7 @@ class InstanceOverviewReplicaSet extends Component {
         {
             running: true,
             primary: true,
-            name: '_________.mongostratus.me:27017',
+            name: '_________',
             vcpu: 'x',
             ram: 'x',
             disk: 'x',
@@ -108,7 +108,7 @@ class InstanceOverviewReplicaSet extends Component {
                       running: replica.running,
                       replicaSetState: data2.members[replicaNo].stateStr,
                       replicaSetName: data2.set,
-                      name: username + '-' + instanceInfo.instanceName + '-' + replicaNo + '.mongostratus.me:27017',
+                      name: username + '-' + instanceInfo.instanceName + '-' + replicaNo,
                       vcpu: vcpu,
                       ram: ram,
                       disk: replica.diskSize,
@@ -132,7 +132,7 @@ class InstanceOverviewReplicaSet extends Component {
                 <Table celled singleLine collapsing unstackable className = 'server-table'>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell colSpan = '2'>
+                            <Table.HeaderCell colSpan = '2' textAlign = 'center'>
                                 {
                                     replica.running &&
                                     <Popup inverted
@@ -207,6 +207,14 @@ class InstanceOverviewReplicaSet extends Component {
                             </Table.Cell>
                             <Table.Cell>
                                 { replica.ip }
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                Port
+                            </Table.Cell>
+                            <Table.Cell>
+                                27017
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
