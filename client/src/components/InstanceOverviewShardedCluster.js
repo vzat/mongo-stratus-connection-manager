@@ -12,7 +12,7 @@ class InstanceOverviewShardedCluster extends Component {
         config: [{
             running: true,
             primary: true,
-            name: '_________.mongostratus.me:27017',
+            name: '_________',
             vcpu: 'x',
             ram: 'x',
             disk: 'x',
@@ -24,7 +24,7 @@ class InstanceOverviewShardedCluster extends Component {
             shard1: [{
                 running: true,
                 primary: true,
-                name: '_________.mongostratus.me:27017',
+                name: '_________',
                 vcpu: 'x',
                 ram: 'x',
                 disk: 'x',
@@ -36,7 +36,7 @@ class InstanceOverviewShardedCluster extends Component {
         router: [{
             running: true,
             primary: true,
-            name: '_________.mongostratus.me:27017',
+            name: '_________',
             vcpu: 'x',
             ram: 'x',
             disk: 'x',
@@ -112,7 +112,7 @@ class InstanceOverviewShardedCluster extends Component {
 
                   const serverDetails = {
                       running: server.running,
-                      name: server.name + ':27017',
+                      name: server.name,
                       vcpu: vcpu,
                       ram: ram,
                       disk: server.diskSize,
@@ -223,6 +223,14 @@ class InstanceOverviewShardedCluster extends Component {
                             </Table.Cell>
                             <Table.Cell>
                                 { router[0].ip }
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                Port
+                            </Table.Cell>
+                            <Table.Cell>
+                                27017
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>

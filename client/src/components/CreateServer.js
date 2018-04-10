@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './css/CreateServer.css';
 
-import { Modal, Grid, Input, Image, Menu, Header, Dropdown, Divider, Button, Tab, Dimmer, Loader } from 'semantic-ui-react';
+import { Modal, Grid, Input, Image, Menu, Header, Dropdown, Divider, Button, Tab, Dimmer, Loader, Icon, Popup, Responsive } from 'semantic-ui-react';
 
 import db from './utils/db.js';
 
@@ -534,14 +534,6 @@ class CreateServer extends Component {
 
         const mongoVersions = [
             {
-                text: '3.0',
-                value: '3.0'
-            },
-            {
-                text: '3.2',
-                value: '3.2'
-            },
-            {
                 text: '3.4',
                 value: '3.4'
             },
@@ -782,7 +774,7 @@ class CreateServer extends Component {
                         }
                     </Grid.Column>
                     <Grid.Column> <b> Region </b> </Grid.Column>
-                    <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                    <Grid.Column> <b> Machine Type { machineTypesDetails } </b> </Grid.Column>
                     <Grid.Column> <b> Disk Size </b> </Grid.Column>
                 </Grid.Row>
                 {
@@ -887,7 +879,7 @@ class CreateServer extends Component {
                 <Grid.Row columns = 'equal' key = 'shardedCluster-config-header' >
                     <Grid.Column> <b> Config Servers </b> </Grid.Column>
                     <Grid.Column> <b> Region </b> </Grid.Column>
-                    <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                    <Grid.Column> <b> Machine Type { machineTypesDetails } </b> </Grid.Column>
                     <Grid.Column> <b> Disk Size </b> </Grid.Column>
                 </Grid.Row>
                 { shardedClusterConfigTable }
@@ -919,7 +911,7 @@ class CreateServer extends Component {
                     <Grid.Row columns = 'equal' key = 'shardedCluster-router-header' >
                         <Grid.Column> <b> Router </b> </Grid.Column>
                         <Grid.Column> <b> Region </b> </Grid.Column>
-                        <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                        <Grid.Column> <b> Machine Type { machineTypesDetails } </b> </Grid.Column>
                         <Grid.Column> <b> Disk Size </b> </Grid.Column>
                     </Grid.Row>
                     { shardedClusterRouterTable }
@@ -929,16 +921,50 @@ class CreateServer extends Component {
 
         const tabs = [{
             menuItem: 'Config Servers',
-            render: () => configServers
+            render: () => <Tab.Pane> { configServers } </Tab.Pane>
         },
         {
             menuItem: 'Shards',
-            render: () => shardsServers
+            render: () => <Tab.Pane> { shardsServers } </Tab.Pane>
         },
         {
             menuItem: 'Router',
-            render: () => routerServers
+            render: () => <Tab.Pane> { routerServers } </Tab.Pane>
         }];
+
+        const machineTypesDetails = (
+            <Responsive as = {Popup} minWidth = '768' flowing
+                position = 'top center'
+                trigger = {<Icon circular name = 'info' size = 'small' style = {{float: 'right'}}/>}>
+                <Grid centered celled columns = '3'>
+                    <Grid.Row>
+                        <Grid.Column textAlign = 'center' >
+                            <Header as = 'h4'> micro </Header>
+                        </Grid.Column>
+                        <Grid.Column textAlign = 'center' >
+                            <Header as = 'h4'> small </Header>
+                        </Grid.Column>
+                        <Grid.Column textAlign = 'center' >
+                            <Header as = 'h4'> standard </Header>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column textAlign = 'center' >
+                            <p> 0.2 vCPU </p>
+                            <p> 0.60 GB RAM </p>
+                        </Grid.Column>
+                        <Grid.Column textAlign = 'center' >
+                            <p> 0.5 vCPU </p>
+                            <p> 1.70 GB RAM </p>
+                        </Grid.Column>
+                        <Grid.Column textAlign = 'center' >
+                            <p> 1 vCPU </p>
+                            <p> 3.75 GB RAM </p>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+            </Responsive>
+        );
 
         return (
           <div className = "CreateServer">
@@ -954,7 +980,6 @@ class CreateServer extends Component {
                       maxWidth: 800
                   }} >
                       <Modal.Header> Create New Instance </Modal.Header>
-
 
                       <Modal.Content>
                           <Dimmer active = { this.state.loading } >
@@ -979,27 +1004,13 @@ class CreateServer extends Component {
                               <Grid.Row>
                                   <Grid.Column>
                                       <Header dividing> Cloud Platform </Header>
-                                      <Menu fluid stackable widths = '3' >
+                                      <Menu fluid stackable widths = '1' >
                                           <Menu.Item
                                               name = 'platform'
                                               value = 'gcp'
                                               active = { this.state.platform === 'gcp' }
                                               onClick = { this.handleMenuChange } >
                                                   <Image src = {gcp} size = 'small'/>
-                                          </Menu.Item>
-                                          <Menu.Item
-                                              name = 'platform'
-                                              value = 'aws'
-                                              active = { this.state.platform === 'aws' }
-                                              onClick = { this.handleMenuChange } >
-                                                  <Image src = {aws} size = 'small'/>
-                                          </Menu.Item>
-                                          <Menu.Item
-                                              name = 'platform'
-                                              value = 'azure'
-                                              active = { this.state.platform === 'azure' }
-                                              onClick = { this.handleMenuChange } >
-                                                  <Image src = {azure} size = 'small'/>
                                           </Menu.Item>
                                       </Menu>
                                   </Grid.Column>
@@ -1054,7 +1065,7 @@ class CreateServer extends Component {
                                           <Grid.Row columns = 'equal' key = 'singleNode-header' >
                                               <Grid.Column/>
                                               <Grid.Column> <b> Region </b> </Grid.Column>
-                                              <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                                              <Grid.Column> <b> Machine Type { machineTypesDetails } </b> </Grid.Column>
                                               <Grid.Column> <b> Disk Size </b> </Grid.Column>
                                           </Grid.Row>
                                           { singleNodeTable }
@@ -1070,7 +1081,7 @@ class CreateServer extends Component {
                                           <Grid.Row columns = 'equal' key = 'replicaSet-header' >
                                               <Grid.Column/>
                                               <Grid.Column> <b> Region </b> </Grid.Column>
-                                              <Grid.Column> <b> Machine Type </b> </Grid.Column>
+                                              <Grid.Column> <b> Machine Type { machineTypesDetails } </b> </Grid.Column>
                                               <Grid.Column> <b> Disk Size </b> </Grid.Column>
                                           </Grid.Row>
                                           { replicaSetTable }
