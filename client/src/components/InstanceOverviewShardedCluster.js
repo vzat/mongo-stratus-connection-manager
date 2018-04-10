@@ -156,7 +156,7 @@ class InstanceOverviewShardedCluster extends Component {
                 <Table celled singleLine collapsing unstackable className = 'server-table'>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell colSpan = '2'>
+                            <Table.HeaderCell colSpan = '2' textAlign = 'center'>
                                 {
                                     router[0].running &&
                                     <Popup inverted
@@ -244,7 +244,7 @@ class InstanceOverviewShardedCluster extends Component {
                 <Table celled singleLine collapsing unstackable className = 'server-table'>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell colSpan = '2'>
+                            <Table.HeaderCell colSpan = '2' textAlign = 'center'>
                                 {
                                     server.running &&
                                     <Popup inverted
@@ -329,7 +329,7 @@ class InstanceOverviewShardedCluster extends Component {
                                 <Table celled singleLine collapsing unstackable className = 'server-table'>
                                     <Table.Header>
                                         <Table.Row>
-                                            <Table.HeaderCell colSpan = '2'>
+                                            <Table.HeaderCell colSpan = '2' textAlign = 'center'>
                                                 {
                                                     server.running &&
                                                     <Popup inverted
