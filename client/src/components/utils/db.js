@@ -80,7 +80,7 @@ const db = {
         return await res.json();
     },
     addUser: async (username, instance, data) => {
-        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/' + '/user', {
+        const res = await fetch('/api/v1/internal/' + username + '/' + instance + '/user', {
             method: 'POST',
             credentials: 'include',
             headers: {
