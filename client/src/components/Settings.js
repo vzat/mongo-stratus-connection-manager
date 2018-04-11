@@ -93,6 +93,10 @@ class Settings extends Component {
                     <div> Copy Token </div>
                   }
               </Popup>
+              <p> <b> Note: </b> The Token must be sent as a Bearer token in the Authorization header of every request. </p>
+              <p> For user and instance related commands the following API endpoints can be used: </p>
+              <p> { 'https://api.mongostratus.me/api/v1/' + this.props.username } </p>
+              <p> { 'https://api.mongostratus.me/api/v1/' + this.props.username + '/' + this.props.instance } </p>
 
               <Divider hidden />
 
@@ -101,7 +105,9 @@ class Settings extends Component {
                   Regenerate Token
               </Button>
 
-              <Divider hidden />
+
+
+              <Divider />
 
               <Button icon color = 'red' labelPosition = 'left' onClick = { this.showDeleteInstanceConfirm }>
                   <Icon name = 'trash' />

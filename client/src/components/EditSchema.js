@@ -101,10 +101,16 @@ class EditSchema extends Component {
                     });
                 }
             }
-
             this.setState({state: state});
         }
     };
+
+    clearCollections = async () => {
+        let state = this.state;
+        state.collections = [];
+        state.customObjects = [];
+        await this.setState({state: state});
+    }
 
     componentDidMount = async () => {
         if (this.props.username && this.props.instance && this.props.database) {
@@ -112,12 +118,14 @@ class EditSchema extends Component {
         }
     };
 
-    componentWillReceiveProps = (nextProps) => {
+    componentWillReceiveProps = async (nextProps) => {
+        if (nextProps.open && !this.props.open) {
+            await this.clearCollections();
+        }
+
         if (nextProps.username !== undefined &&
             nextProps.instance !== undefined &&
-            nextProps.database !== undefined &&
-            this.state.collections.length === 0 &&
-            this.state.customObjects.length === 0) {
+            nextProps.database !== undefined) {
                 this.getSchema(nextProps.username, nextProps.instance, nextProps.database);
         }
     };
@@ -504,6 +512,30 @@ class EditSchema extends Component {
             </div>
         ));
 
+        const queries = collections.map((collection, index) => (
+            <div>
+                {
+                    collection.name !== undefined && collection.name.length > 0 &&
+                    <div>
+                        { 'get' + utils.toProperCase(collection.name) + ' (query: ' + utils.toProperCase(collection.name) + '_Document): [' + utils.toProperCase(collection.name) + '_Document]' }
+                    </div>
+                }
+            </div>
+        ));
+
+        const mutations = collections.map((collection, index) => (
+            <div>
+                {
+                    collection.name !== undefined && collection.name.length > 0 &&
+                    <div>
+                        <p> { 'insert' + utils.toProperCase(collection.name) + ' (docs: [' + utils.toProperCase(collection.name) + '_Document]): [' + utils.toProperCase(collection.name) + '_Document]' } </p>
+                        <p> { 'update' + utils.toProperCase(collection.name) + ' (filter: ' + utils.toProperCase(collection.name) + '_Document, update: ' + utils.toProperCase(collection.name) + '_Document): [' + utils.toProperCase(collection.name) + '_Document]' } </p>
+                        <p> { 'delete' + utils.toProperCase(collection.name) + ' (filter: ' + utils.toProperCase(collection.name) + '_Document): [' + utils.toProperCase(collection.name) + '_Document]' } </p>
+                    </div>
+                }
+            </div>
+        ));
+
         const objectsList = customObjects.map((customObject, customObjectIndex) => (
             <div>
                 <Input
@@ -632,6 +664,36 @@ class EditSchema extends Component {
                     </Button>
                 </Tab.Pane>
             )
+        },
+        {
+            menuItem: 'GraphQL Schema', pane: (
+                <Tab.Pane key = 'graphql'>
+                    { this.state.collections.length > 0 &&
+                        <div>
+                            <h4> API Endpoint </h4>
+                            { 'https://api.mongostratus.me/api/v1/' + this.props.username + '/' + this.props.instance + '/' + this.props.database }
+
+                            <Divider hidden />
+
+                            <h4> Queries </h4>
+                            { queries }
+
+                            <Divider hidden />
+
+                            <h4> Mutations </h4>
+                            { mutations }
+
+                            <Divider hidden />
+                            <b> Note: </b> { 'The "_Document" objects represent the schema defined in the Collections tab' }
+                        </div>
+                    }
+                    { this.state.collections.length === 0 &&
+                        <div>
+                            A schema must be defined in order to view possible GraphQL Queries and Mutations.
+                        </div>
+                    }
+                </Tab.Pane>
+            )
         }];
 
         return (
@@ -651,6 +713,7 @@ class EditSchema extends Component {
 
                       <Modal.Content>
                           <Tab panes = {panes} renderActiveOnly={false} />
+
                           <Dimmer active = { this.state.loading } >
                               <Loader content = 'Loading' />
                           </Dimmer>
