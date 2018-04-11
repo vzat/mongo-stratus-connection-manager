@@ -125,7 +125,9 @@ class EditSchema extends Component {
 
         if (nextProps.username !== undefined &&
             nextProps.instance !== undefined &&
-            nextProps.database !== undefined) {
+            nextProps.database !== undefined &&
+	    this.state.collections.length === 0 &&
+	    this.state.customObjects.length === 0) {
                 this.getSchema(nextProps.username, nextProps.instance, nextProps.database);
         }
     };
@@ -531,6 +533,7 @@ class EditSchema extends Component {
                         <p> { 'insert' + utils.toProperCase(collection.name) + ' (docs: [' + utils.toProperCase(collection.name) + '_Document]): [' + utils.toProperCase(collection.name) + '_Document]' } </p>
                         <p> { 'update' + utils.toProperCase(collection.name) + ' (filter: ' + utils.toProperCase(collection.name) + '_Document, update: ' + utils.toProperCase(collection.name) + '_Document): [' + utils.toProperCase(collection.name) + '_Document]' } </p>
                         <p> { 'delete' + utils.toProperCase(collection.name) + ' (filter: ' + utils.toProperCase(collection.name) + '_Document): [' + utils.toProperCase(collection.name) + '_Document]' } </p>
+			<Divider hidden />
                     </div>
                 }
             </div>
@@ -689,7 +692,7 @@ class EditSchema extends Component {
                     }
                     { this.state.collections.length === 0 &&
                         <div>
-                            A schema must be defined in order to view possible GraphQL Queries and Mutations.
+                            At least one collection must be defined in order to view the generated GraphQL schema.
                         </div>
                     }
                 </Tab.Pane>
