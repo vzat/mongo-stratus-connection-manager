@@ -271,7 +271,15 @@ class DatabaseList extends Component {
                         </Dimmer>
                     </Modal.Content>
                   }
-                  confirmButton = 'Drop Database'
+                  confirmButton = {
+                      <Button icon
+                          labelPosition = 'left'
+                          primary = {false}
+                          color = 'red'>
+                              <Icon name = 'trash' />
+                              Drop Database
+                      </Button>
+                  }
                   size = 'fullscreen'
                   style = {{
                       marginTop: '40vh',

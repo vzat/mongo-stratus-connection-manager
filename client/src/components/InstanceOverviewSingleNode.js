@@ -10,7 +10,7 @@ import gcpMachineTypes from './resources/gcpMachineTypes.json';
 class InstanceOverviewSingleNode extends Component {
     state = {
         running: true,
-        name: '_________.mongostratus.me:27017',
+        name: '_________',
         vcpu: 'x',
         ram: 'x',
         disk: 'x',
@@ -75,7 +75,7 @@ class InstanceOverviewSingleNode extends Component {
 
               const newState = {
                   running: data.running,
-                  name: username + '-' + instanceInfo.instanceName + '.mongostratus.me:27017',
+                  name: username + '-' + instanceInfo.instanceName,
                   vcpu: vcpu,
                   ram: ram,
                   disk: data.diskSize,
@@ -94,7 +94,7 @@ class InstanceOverviewSingleNode extends Component {
                 <Table celled singleLine collapsing unstackable className = 'server-table'>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell colSpan = '2'>
+                            <Table.HeaderCell colSpan = '2' textAlign = 'center'>
                                 {
                                     this.state.running &&
                                     <Popup inverted
@@ -153,6 +153,14 @@ class InstanceOverviewSingleNode extends Component {
                             </Table.Cell>
                             <Table.Cell>
                                 { this.state.ip }
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                Port
+                            </Table.Cell>
+                            <Table.Cell>
+                                27017
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
