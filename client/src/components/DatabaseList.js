@@ -4,7 +4,7 @@ import './css/DatabaseList.css';
 
 import EditSchema from './EditSchema';
 
-import { Button, Icon, Container, Header, Table, Modal, Input, Dimmer, Loader, Confirm } from 'semantic-ui-react';
+import { Button, Icon, Container, Header, Table, Modal, Input, Dimmer, Loader, Confirm, Popup } from 'semantic-ui-react';
 
 import db from './utils/db';
 
@@ -171,19 +171,28 @@ class DatabaseList extends Component {
                     {this.sizeOnDiskToString(database.sizeOnDisk)}
                 </Table.Cell>
                 <Table.Cell collapsing>
-                    <Button compact
-                        id = {index}
-                        name = 'editSchema'
-                        icon = 'edit'
-                        onClick = {this.openEditSchema}
-                    />
-                    <Button compact
-                        id = {index}
-                        name = 'deleteDatabase'
-                        icon = 'trash'
-                        color = 'red'
-                        onClick = {() => this.confirmDelete('confirmDeleteDatabase', index)}
-                    />
+                    <Popup inverted
+                        trigger = {
+                            <Button compact
+                                id = {index}
+                                name = 'editSchema'
+                                icon = 'edit'
+                                onClick = {this.openEditSchema}
+                            />
+                        }
+                        content = 'Edit Schema' />
+
+                    <Popup inverted
+                        trigger = {
+                            <Button compact
+                                id = {index}
+                                name = 'deleteDatabase'
+                                icon = 'trash'
+                                color = 'red'
+                                onClick = {() => this.confirmDelete('confirmDeleteDatabase', index)}
+                            />
+                        }
+                        content = 'Delete Database' />
                 </Table.Cell>
             </Table.Row>
         ));
