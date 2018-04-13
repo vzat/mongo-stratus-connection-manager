@@ -64,9 +64,11 @@ class Settings extends Component {
     };
 
     copyToken = (event, comp) => {
-        // Reference https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+        // Reference: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
         document.getElementById('token').select();
         const success = document.execCommand('copy');
+        // End Reference
+
         if (success) {
             this.setState({tokenCopied: true});
         }
