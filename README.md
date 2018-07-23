@@ -19,10 +19,10 @@ The project’s goal is to provide a flexible and easy to use web service that d
 ### Registration Page
 ![Registration Page](./images/Register.png)
 
-### Creating and Instance Part 1
+### Creating a new Instance Part 1
 ![CreateInstance1](./images/CreateInstace.png)
 
-### Creating and Instance Part 2
+### Creating a new Instance Part 2
 ![CreateInstance2](./images/ShardedCluster.png)
 
 ### Instance Overview
