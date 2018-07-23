@@ -2,7 +2,7 @@
 MongoStratus Connection Manager
 
 ## Components
-The other MongoStratus components can be found at the following links:
+The Connection Manager is one of the components of MongoStratus. The other ones can be found at the following links:
 * [Login Manager](https://github.com/vzat/mongo-stratus-login-manager)
 * [Data Retriever](https://github.com/vzat/mongo-stratus-data-retriever)
 * [Data Visualiser](https://github.com/vzat/mongo-stratus-data-visualiser)
